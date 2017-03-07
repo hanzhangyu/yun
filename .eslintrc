@@ -1,0 +1,27 @@
+{
+  "parser": "babel-eslint",  // 提供 ES6 ES7 语法支持
+  "rules": {
+    "indent": [1, 4, { "SwitchCase": 1 }], // 缩进使用4个空格，需要 case 缩进，在数组中加上 { "SwitchCase": 1 }
+    "default-case": 0,  // switch 关闭必须使用 default
+    "max-len": [2, 300], // 一行最多300个字符
+    "no-unused-expressions": [1, { "allowShortCircuit": true, "allowTernary": true }],
+    "func-names": 0,  // 函数名不是必须的
+    "space-before-function-paren": [0, "always"],  // 函数的小括号前不需要空格
+    "arrow-body-style": [1, "as-needed"],  // 当箭头函数的大括号可以省略时的错误提示改为警告
+
+    "no-console": 0,  // 允许使用 console.log()
+    "import/no-unresolved": 0, // 关闭导入文件必须是es6写法的限制
+    "global-require": 0, // 关闭不允许在局部代码块中使用require的限制
+    "new-cap": 0, // 关闭方法名首字母不能大写的限制
+    "comma-dangle": 0, // 关闭对象中最后一值必须有个逗号的限制
+    "no-case-declarations": 0, // 关闭case中不能申明变量的限制
+    "eqeqeq": 0, // 关闭强制使用===的限制
+    "no-confusing-arrow": 0, // 关闭箭头函数不能直接用三元表达式的限制
+    "react/jsx-indent": [1, 4], // 缩进使用4个空格
+    "react/jsx-indent-props": [1, 4],
+    "react/jsx-no-bind": 0, // 关闭jsx中不能使用bind的限制
+    "react/prefer-stateless-function": 0 // 关闭纯组件的限制
+
+  },
+  "extends": "airbnb"  // airbnb 语法规范
+}

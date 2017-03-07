@@ -1,0 +1,33 @@
+@import "../../layouts/css/common.less";
+@appBarHeight:72px !important;
+
+.appBar {
+  height: @appBarHeight;
+  background: transparent !important;
+  box-shadow: none !important;
+  & > h1 {
+    color: @bgColorStrong;
+    line-height: 64px !important;
+  }
+}
+
+.drawer {
+  & .drawerPage {
+    font-family: @defaultFontFamilyStrong;
+    user-select: none;
+    &.active {
+      background: @bgColorShallowStrong;
+      color: #fff !important;
+    }
+  }
+}
+
+:global {
+  .main-content{
+    position:absolute;
+    top:@appBarHeight;
+    bottom:0;
+    left:0;
+    right:0;
+  }
+}

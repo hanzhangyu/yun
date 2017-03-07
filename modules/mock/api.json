@@ -1,0 +1,164 @@
+{
+  "common":[
+    {
+      "url": "/imgUpload",
+      "desc": "图片上传",
+      "method": "POST",
+      "req": {
+        "upload": "files"
+      },
+      "res": {
+        "code": 200,
+        "msg": "upload success",
+        "data": {
+          "src": "/images/user_boy_default.jpg"
+        }
+      }
+    }
+  ],
+  "user":[
+    {
+      "url": "/login",
+      "desc": "登录---400登录失败，邮箱或密码错误---200成功",
+      "method": "POST",
+      "req": {
+        "email": "939205919@qq.com",
+        "password": "123456"
+      },
+      "delay": 1000,
+      "mock": true,
+      "res": {
+        "code": 200,
+        "msg": "登录失败，邮箱或密码错误",
+        "data": {
+          "userId": 1,
+          "name": "小保罗",
+          "email": "939205919@qq.com",
+          "roles|1": [
+            "Admin",
+            "Manager",
+            "Operator"
+          ],
+          "img":"/images/user_girl_default.jpg"
+        }
+      }
+    },
+    {
+      "url": "/signUp",
+      "desc": "注册",
+      "method": "POST",
+      "req": {
+        "email": "939205919@qq.com",
+        "password": "123456"
+      },
+      "delay": 1000,
+      "mock": true,
+      "res": {
+        "code": 400,
+        "msg": "注册失败！",
+        "data": {
+          "userId": 1,
+          "name": "小保罗",
+          "email": "939205919@qq.com",
+          "roles|1": [
+            "Admin",
+            "Manager",
+            "Operator"
+          ],
+          "img":"/images/user_girl_default.jpg"
+        }
+      }
+    },
+    {
+      "url": "/currentUser",
+      "desc": "获取当前登录用户信息",
+      "method": "GET",
+      "req": null,
+      "mock": true,
+      "res": {
+        "code": 200,
+        "msg": "Get current user info successfully.",
+        "data": {
+          "userId": 1,
+          "name": "小保罗",
+          "email": "939205919@qq.com",
+          "roles|1": [
+            "Admin",
+            "Manager",
+            "Operator"
+          ],
+          "img":"/images/user_girl_default.jpg"
+        }
+      }
+    },
+    {
+      "url": "/forgetPW",
+      "desc": "忘记密码",
+      "method": "POST",
+      "req": {
+        "email": "939205919@qq.com"
+      },
+      "res": {
+        "code": 200,
+        "msg": "Send Password success",
+        "data": true
+      }
+    },
+    {
+      "url": "/changePW",
+      "desc": "修改密码",
+      "method": "POST",
+      "req": {
+        "oldPW": "123qwe",
+        "PW": "123qwe"
+      },
+      "res": {
+        "code": 400,
+        "msg": "Change Password failed",
+        "data": false
+      }
+    },
+    {
+      "url": "/changeUsername",
+      "desc": "修改用户名",
+      "method": "POST",
+      "req": {
+        "username": "小保罗"
+      },
+      "res": {
+        "code": 200,
+        "msg": "Change Username success",
+        "data": {
+          "name": "小保罗改"
+        }
+      }
+    },
+    {
+      "url": "/changeAvatar",
+      "desc": "修改用户头像",
+      "method": "POST",
+      "req": {
+        "src":  "/images/user_boy_default.jpg"
+      },
+      "res": {
+        "code": 200,
+        "msg": "Change Username success",
+        "data": {
+          "src":  "/images/user_boy_default.jpg"
+        }
+      }
+    },
+    {
+      "url": "/logout",
+      "desc": "注销",
+      "method": "POST",
+      "delay": 200,
+      "mock": true,
+      "res": {
+        "code": 200,
+        "msg": "注销成功",
+        "data": true
+      }
+    }
+  ]
+}

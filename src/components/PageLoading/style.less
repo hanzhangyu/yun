@@ -1,0 +1,50 @@
+@import "../../layouts/css/common.less";
+
+// 页面加载效果
+.page-loading-wrapper {
+  bottom: 0;
+  color: #999;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 9000;
+  background-color: @modelBgColor;
+  .spinner {
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    left: 0;
+    margin-top: -20px;
+    width: 100%;
+    & > div{
+      width: 30px;
+      height: 30px;
+      background-color: @bgColorShallowStrong;
+      margin: 0 4px;
+      border-radius: 100%;
+      display: inline-block;
+      animation: bouncedelay 1.4s infinite ease-in-out;
+      animation-fill-mode: both;
+    }
+    .bounce1{
+      animation-delay: -0.32s;
+    }
+    .bounce2 {
+      animation-delay: -0.16s;
+    }
+  }
+}
+@-webkit-keyframes bouncedelay {
+  0%, 80%, 100% { -webkit-transform: scale(0.0) }
+  40% { -webkit-transform: scale(1.0) }
+}
+@keyframes bouncedelay {
+  0%, 80%, 100% {
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  } 40% {
+      transform: scale(1.0);
+      -webkit-transform: scale(1.0);
+    }
+}

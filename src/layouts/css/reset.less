@@ -1,0 +1,44 @@
+// 公共资源引入，以及reset
+@import '../../../node_modules/sweetalert/dist/sweetalert.css';
+@import './common.less';
+
+body, html {
+  padding:0;
+  margin:0;
+  font-family: @defaultFontFamily
+}
+.sweet-alert ,input, textarea, keygen, select, button{
+  font-family: @defaultFontFamily
+}
+@font-face {
+  font-family: 'icomoon';
+  src:  url('../fonts/icomoon.eot?vp31fw');/* IE9*/
+  src:  url('../fonts/icomoon.eot?vp31fw#iefix') format('embedded-opentype'),/* IE6-IE8 */
+  url('../fonts/icomoon.ttf?vp31fw') format('truetype'),/* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('../fonts/icomoon.woff?vp31fw') format('woff'),/* chrome, firefox */
+  url('../fonts/icomoon.svg?vp31fw#icomoon') format('svg');/* iOS 4.1- */
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-search:before {
+  content: "\e986";
+}
+.icon-menu:before {
+  content: "\e9bd";
+}
