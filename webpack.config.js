@@ -17,28 +17,28 @@ var precss = require('precss');
 var IS_DEV = process.env.NODE_ENV !== 'production';
 console.log('env', process.env.NODE_ENV);
 
-//// 删除目录下的文件函数
-//var removeFiles = function (path) {
-//    var folder_exists = fs.existsSync(path);
-//    if (folder_exists == true) {
-//        var dirList = fs.readdirSync(path);
-//        dirList.forEach(function (fileName) {
-//            fs.unlinkSync(path + fileName);
-//        });
-//    } else {
-//        throw new Error('要删除的文件目录不存在');
-//    }
-//};
-//// 生产线先删除编译后冗余的 js 和 css
-//if (!IS_DEV) {
-//    try {
-//        removeFiles(PUBLIC_PATH + '/js/');
-//        removeFiles(PUBLIC_PATH + '/css/');
-//        fs.unlinkSync(VIEW_PATH + '/index.html');
-//    } catch (e) {
-//        console.log('---------------' + e + '---------------');
-//    }
-//}
+// 删除目录下的文件函数
+var removeFiles = function (path) {
+    var folder_exists = fs.existsSync(path);
+    if (folder_exists == true) {
+        var dirList = fs.readdirSync(path);
+        dirList.forEach(function (fileName) {
+            fs.unlinkSync(path + fileName);
+        });
+    } else {
+        throw new Error('要删除的文件目录不存在');
+    }
+};
+// 生产线先删除编译后冗余的 js 和 css
+if (!IS_DEV) {
+    try {
+        removeFiles(PUBLIC_PATH + '/js/');
+        removeFiles(PUBLIC_PATH + '/css/');
+        fs.unlinkSync(VIEW_PATH + '/index.html');
+    } catch (e) {
+        console.log('---------------' + e + '---------------');
+    }
+}
 
 var plugins = [
     new webpack.LoaderOptionsPlugin({
@@ -154,7 +154,7 @@ module.exports = {
                 test: /\.ttf(\?\S*)?$/,
                 loader: 'url-loader?limit=1024&mimetype=application/octet-stream&name=fonts/[name].[ext]'
             },
-            {test: /\.eot(\?\S*)?$/, loader: 'file-loader?name=font/[name].[ext]'},
+            {test: /\.eot(\?\S*)?$/, loader: 'file-loader?name=fonts/[name].[ext]'},
             {test: /\.svg(\?\S*)?$/, loader: 'url-loader?limit=1024&mimetype=image/svg+xml&name=fonts/[name].[ext]'}
         ]
     },

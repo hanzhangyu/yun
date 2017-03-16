@@ -18,7 +18,7 @@ export default (initialState) => {
         ? window.devToolsExtension()(createStore)
         : createStore;
 
-    // 不想分析日志logger
+    // 我有devtool
     const createStoreWithMiddleware = applyMiddleware(
         delay,
         thunkMiddleware,
