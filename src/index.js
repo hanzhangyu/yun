@@ -38,6 +38,10 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configure from './store';
+import Perf from 'react-addons-perf';
+
+ //方便console自定义测试
+ window.Perf = Perf;
 
 // Root store
 var store = configure();
