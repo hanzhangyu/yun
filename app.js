@@ -32,6 +32,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.get('*', function (request, response){
 //    response.sendFile(path.resolve(__dirname, 'public', 'index.html'))
 //})
+app.get('/', function (req, res){
+    res.sendFile(path.resolve(__dirname, 'views', 'index.html'))
+});
 
 // FIXME 因为时间有点赶，所以先启用mock模拟数据，后台带前端写完再补上，希望根根不要打死我，留我一滴血，我就还能浪
 //静态目录

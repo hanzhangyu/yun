@@ -3,15 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start-proStart-comment": "开发环境使用,正式环境build一下,再启用server,或者直接使用proStart",
-    "start": "run-p dev server",
-    "proStart": "run-p build server",
-    "dev-comment": "开发环境使用,start 命令使用了 --devtool source-maps 生成 sourcemap 文件,调试的时候,控制台中的输出就能定位到 JS 源文件中.这个命令可以简写为 -d (在 webpack 中配置 devtool: 'cheap-module-eval-source-map', 应该具有相同效果,不过命令行的好处好像是不会生成 map 文件?)",
-    "dev": "webpack-dev-server --inline --port 3000 --history-api-fallback --devtool cheap-module-eval-source-map --progress --colors --content-base .",
+    "start": "cross-env NODE_ENV=production gulp",
+    "dev": "gulp devServer",
     "build-comment": "打包至public和view下供正式环境express使用设置 NODE_ENV,在 Windows 下是使用 set 命令,而 Mac 下是使用 export 命令.所以为了解决跨平台问题,使用 npm 安装 cross-env 命令,使用它代替 set|export 命令",
-    "build": "cross-env NODE_ENV=production webpack  --progress --colors -p",
+    "build": "cross-env NODE_ENV=production gulp build",
     "server-comment": "启动express 服务器,用作后台. webpack 中配置了 proxy, 将请求重定向到这个 node 服务器,正式环境直接启用这个server即可",
-    "server": "node ./bin/www"
+    "server": "gulp server"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.6",
@@ -34,6 +31,9 @@
     "eslint-plugin-react": "^5.1.1",
     "extract-text-webpack-plugin": "^2.0.0-beta.4",
     "file-loader": "^0.8.4",
+    "gulp": "^3.9.1",
+    "gulp-nodemon": "^2.2.1",
+    "gulp-util": "^3.0.8",
     "html-webpack-plugin": "^2.10.0",
     "less": "^2.7.1",
     "less-loader": "^2.2.2",

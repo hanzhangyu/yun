@@ -33,7 +33,6 @@ import { getAllLocales, getLocale, setLocale} from '../../i18n';
 var L = require('../../i18n/locales/en_US');
 const LOCALE = getLocale(true);
 L = LOCALE.i18n;
-
 const DIALOGTYPES = {
     default: {
         label: "default",
