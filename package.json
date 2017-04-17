@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "start": "cross-env NODE_ENV=production gulp",
-    "dev": "gulp devServer",
+    "dev": "run-p devServer server",
+    "test": "gulp devServer",
+    "devServer": "webpack-dev-server --progress",
     "build-comment": "打包至public和view下供正式环境express使用设置 NODE_ENV,在 Windows 下是使用 set 命令,而 Mac 下是使用 export 命令.所以为了解决跨平台问题,使用 npm 安装 cross-env 命令,使用它代替 set|export 命令",
     "build": "cross-env NODE_ENV=production gulp build",
     "server-comment": "启动express 服务器,用作后台. webpack 中配置了 proxy, 将请求重定向到这个 node 服务器,正式环境直接启用这个server即可",
@@ -56,6 +58,7 @@
     "ejs": "~2.5.5",
     "es6-promise": "^3.1.2",
     "express": "~4.14.1",
+    "fetch-jsonp": "^1.0.6",
     "formidable": "^1.1.1",
     "immutable": "^3.8.1",
     "js-cookie": "^2.1.2",

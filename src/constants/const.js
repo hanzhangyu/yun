@@ -52,3 +52,4 @@ export const KEYBOARD = {
     Z: 90
 };
 export const SEARCH_KEYWORD = '%keyword%';
+export const BAIDU_KEYWORD = 'https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?cb=da&&wd=' + SEARCH_KEYWORD;

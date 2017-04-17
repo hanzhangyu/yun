@@ -4,6 +4,7 @@
 // 支持fetch
 import 'es6-promise';
 import 'whatwg-fetch';
+import fetchJsonp from 'fetch-jsonp';
 
 // querystring 包含 stringify 和 parse 两个方法. stringify 用来将对象转换成字符串,用 & = 连接的查询字符串; parse 正好相反,将字符串转为对象
 import qs from 'querystring';
@@ -37,6 +38,7 @@ const request = (url, params, method = METHOD.POST, jsonType = false, formType =
     }
     if (method === METHOD.GET) {
         params = {...params} || {};
+        // qs.stringify不支持二级对象
         for (let item in params) {
             if (typeof params[item] == 'object') {
                 params[item] = params[item].join(',');
@@ -53,6 +55,7 @@ const request = (url, params, method = METHOD.POST, jsonType = false, formType =
 const checkRespStatus = (respPromise) => {
     if (respPromise.status !== 200) {
         var {url, status, statusText} = respPromise;
+        console.log(respPromise);
         swal(`${url}\n${status} ${statusText}`);
         return Promise.reject('Server error occurred');
     }
@@ -75,6 +78,21 @@ const checkRespStatus = (respPromise) => {
     })
 };
 
+const requestJsonp = (url, params, callbackName)=> {
+    params = {...params} || {};
+    for (let item in params) {
+        if (typeof params[item] == 'object') {
+            params[item] = params[item].join(',');
+        }
+    }
+    url += ('?' + qs.stringify(params));
+    return fetchJsonp(url, {
+        jsonpCallback: callbackName
+    }).then((response)=> {
+        return response.json()
+    });
+};
+
 const getApi = (url) => API_PREFIX + url;
 
 // dataType: 字符串,如 /search, 即请求的服务器地址
@@ -90,4 +108,6 @@ export default {
     changeAvatar: params => request(getApi('/changeAvatar'), params),
     imgUpload: params => request(getApi('/imgUpload'), params, METHOD.POST, false, true),
     logout: params => request(getApi('/logout'), params, METHOD.GET),
+
+    getBaiduKeyWord: (params, callbackName) => requestJsonp('https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su', params, callbackName),
 }

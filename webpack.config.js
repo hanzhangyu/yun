@@ -13,8 +13,9 @@ var precss = require('precss');
 var config = require('./config');
 
 var IS_DEV = process.env.NODE_ENV !== 'production';
-console.log('env', process.env.NODE_ENV)
+console.log('env', process.env.NODE_ENV);
 var plugins = [
+    new webpack.HotModuleReplacementPlugin(),
     new webpack.LoaderOptionsPlugin({
         devtool: "cheap-module-eval-source-map",
         //minimize: true,
@@ -47,7 +48,7 @@ IS_DEV ? plugins.push(
         template: path.join(config.SRC_PATH, 'index.html'),
         chunks: ['index']
     })
-):plugins.push(
+) : plugins.push(
     //压缩打包的文件，包括JS以外的文件
     new webpack.optimize.UglifyJsPlugin({
         compress: {
@@ -140,8 +141,9 @@ module.exports = {
     },
 
     devServer: {
+        host: '0.0.0.0',//hostname or IP. 0.0.0.0 binds to all hosts.
         port: 3000,
-        hot: false,
+        hot: true,
         inline: true,//实时刷新
         historyApiFallback: true,//不跳转
         contentBase: ".",//本地服务器所加载的页面所在的目录

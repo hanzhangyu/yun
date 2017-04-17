@@ -9,6 +9,7 @@ import { Map } from 'immutable';
 import classnames from 'classnames';
 
 import rootActions from '../../actions/root';
+import snackActions from '../../actions/snack';
 
 import style from './style.less';
 import userBoyImg from '../../layouts/images/user_boy_default.jpg';
@@ -22,7 +23,6 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
-import Snackbar from 'material-ui/Snackbar';
 
 import ImgUpload from '../../components/ImgUpload';
 
@@ -87,10 +87,16 @@ class User extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            msg: "",// 全局提示消息
             username: "",
             ...INITSTATE
-        }
+        };
+        this.openChangePWDialog = this.openChangePWDialog.bind(this);
+        this.openChangeUsernameDialog = this.openChangeUsernameDialog.bind(this);
+        this.openChangeAvatareDialog = this.openChangeAvatareDialog.bind(this);
+        this.logout = this.logout.bind(this);
+        this.changeLanguage = this.changeLanguage.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+        this.imgUploaded = this.imgUploaded.bind(this);
     }
 
     // 关闭所有
@@ -119,7 +125,7 @@ class User extends PureComponent {
         this.setState({
             changeUsernameDialogOpen: true,
             dialogType: DIALOGTYPES.changeUsername.label,
-            username: this.props.data.root.get('user').get('name')
+            username: this.props.user.get('name')
         });
     }
 
@@ -133,8 +139,8 @@ class User extends PureComponent {
 
     // 更改全局提示，""为关闭
     msgChange(msg = "", others) {
-        this.setState({
-            msg: msg,
+        this.props.actions.snackChangeMsg(msg);
+        others && this.setState({
             ...others
         })
     }
@@ -153,12 +159,12 @@ class User extends PureComponent {
                     this.onRegInput('email&&PW', true) && actions.userLogin({
                         email,
                         PW
-                    }).then(()=>this.props.data.root.get('isLogin') && this.msgChange(L.tip_form_loginSuccess, INITSTATE));
+                    }).then(()=>this.props.isLogin && this.msgChange(L.tip_form_loginSuccess, INITSTATE));
                     break;
                 case DIALOGTYPES.signUp.label:
                     this.onRegInput('email&&PW&&rePW', true) && actions.userSignUp({
                         email, PW
-                    }).then(()=>this.props.data.root.get('isLogin') && this.msgChange(L.tip_form_signUpSuccess, INITSTATE));
+                    }).then(()=>this.props.isLogin && this.msgChange(L.tip_form_signUpSuccess, INITSTATE));
                     break;
                 case DIALOGTYPES.forgetPW.label:
                     this.onRegInput('email', true) && actions.userForgetPW({email}).then((data)=>data.error || this.msgChange(L.tip_form_forgetPW_success, INITSTATE));
@@ -239,7 +245,7 @@ class User extends PureComponent {
                 // username比较特殊，严格模式指的是必须更改，而不是非空
                 let regTemp;
                 regTemp = USER_REG.test(username) ? "" : L.tip_form_username_error;
-                strict && username == this.props.data.root.get('user').get('name') && (regTemp = L.tip_form_usernameSame_error);
+                strict && username == this.props.user.get('name') && (regTemp = L.tip_form_usernameSame_error);
                 result = regTemp == "";
                 this.setState({usernameErrorMsg: regTemp});
                 break;
@@ -262,18 +268,19 @@ class User extends PureComponent {
 
     // 切换语言
     changeLanguage() {
-        getAllLocales().map((lang)=>lang.value != LOCALE.value&&setLocale(lang.value));
+        getAllLocales().map((lang)=>lang.value != LOCALE.value && setLocale(lang.value));
         window.location.reload();
     }
 
     render() {
-        const { signDialogOpen,changePWDialogOpen,changeUsernameDialogOpen,changeAvatarDialogOpen,dialogType,msg,
+        console.log('renderUser')
+        const { signDialogOpen,changePWDialogOpen,changeUsernameDialogOpen,changeAvatarDialogOpen,dialogType,
             email,emailErrorMsg,oldPW,oldPWErrorMsg,PW,PWErrorMsg,rePW,rePWErrorMsg,username,usernameErrorMsg }=this.state;
-        const { root } = this.props.data;
+        const { user,isLogin } = this.props;
         const actions = [
             <FlatButton
                 label={L.label_btn_cancel}
-                onTouchTap={this.handleClose.bind(this)}
+                onTouchTap={this.handleClose}
             />,
             <FlatButton
                 label={DIALOGTYPES[dialogType].confirmLabel}
@@ -281,8 +288,6 @@ class User extends PureComponent {
                 onTouchTap={this.switchDialog.bind(this,DIALOGTYPES[dialogType].confirmTo)}
             />
         ];
-        const user = root.get('user');
-        const isLogin = root.get('isLogin');
 
         // 获取到登录信息
         if (isLogin) {
@@ -298,22 +303,22 @@ class User extends PureComponent {
                         targetOrigin={{horizontal: 'right', vertical: 'top'}}
                         anchorOrigin={{horizontal: 'right', vertical: 'top'}}
                     >
-                        <MenuItem className={style.userBtn} onClick={this.openChangePWDialog.bind(this)}
+                        <MenuItem className={style.userBtn} onClick={this.openChangePWDialog}
                                   primaryText={L.label_userBtn_changPW}/>
-                        <MenuItem className={style.userBtn} onClick={this.openChangeUsernameDialog.bind(this)}
+                        <MenuItem className={style.userBtn} onClick={this.openChangeUsernameDialog}
                                   primaryText={L.label_userBtn_changName}/>
-                        <MenuItem className={style.userBtn} onClick={this.openChangeAvatareDialog.bind(this)}
+                        <MenuItem className={style.userBtn} onClick={this.openChangeAvatareDialog}
                                   primaryText={L.label_userBtn_changAvatar}/>
-                        <MenuItem className={style.userBtn} onClick={this.logout.bind(this)}
+                        <MenuItem className={style.userBtn} onClick={this.logout}
                                   primaryText={L.label_userBtn_logout}/>
-                        <MenuItem className={style.userBtn} onClick={this.changeLanguage.bind(this)}
+                        <MenuItem className={style.userBtn} onClick={this.changeLanguage}
                                   primaryText={L.label_userBtn_changeLang}/>
                     </IconMenu>
                     <Dialog
                         actions={actions}
                         modal={false}
                         open={changePWDialogOpen}
-                        onRequestClose={this.handleClose.bind(this)}
+                        onRequestClose={this.handleClose}
                         className={style.dialog}
                     >
                         <div className={style.content}>
@@ -351,7 +356,7 @@ class User extends PureComponent {
                         actions={actions}
                         modal={false}
                         open={changeUsernameDialogOpen}
-                        onRequestClose={this.handleClose.bind(this)}
+                        onRequestClose={this.handleClose}
                         className={style.dialog}
                     >
                         <div className={style.content}>
@@ -370,22 +375,16 @@ class User extends PureComponent {
                         actions={actions}
                         modal={false}
                         open={changeAvatarDialogOpen}
-                        onRequestClose={this.handleClose.bind(this)}
+                        onRequestClose={this.handleClose}
                         className={style.dialog}
                     >
                         <div className={style.content}>
                             <h3>请点击图片选择您要上传的图片</h3>
                             <ImgUpload
                                 initImgSrc={user.get('img')}
-                                onChange={this.imgUploaded.bind(this)}/>
+                                onChange={this.imgUploaded}/>
                         </div>
                     </Dialog>
-                    <Snackbar
-                        open={msg!=""}
-                        message={msg}
-                        autoHideDuration={4000}
-                        onRequestClose={()=>{this.msgChange()}}
-                    />
                 </div>
             );
         } else {
@@ -400,7 +399,7 @@ class User extends PureComponent {
                         actions={actions}
                         modal={false}
                         open={signDialogOpen}
-                        onRequestClose={this.handleClose.bind(this)}
+                        onRequestClose={this.handleClose}
                         className={style.dialog}
                     >
                         {/* 判断对话款类框展示正确的内容 */}
@@ -464,12 +463,6 @@ class User extends PureComponent {
                             )
                         }
                     </Dialog>
-                    <Snackbar
-                        open={msg!=""}
-                        message={msg}
-                        autoHideDuration={4000}
-                        onRequestClose={()=>{this.msgChange()}}
-                    />
                 </div>
             )
         }
@@ -479,12 +472,11 @@ class User extends PureComponent {
 
 // connect action to props
 const mapStateToProps = (state) => ({
-    data: {
-        root: state.root
-    }
+    user: state.root.user,
+    isLogin: state.root.isLogin
 });
 // 使用对象扩展运算,绑定多个 action
-const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...rootActions}, dispatch)});
+const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...rootActions, ...snackActions}, dispatch)});
 
 export default connect(
     mapStateToProps,

@@ -6,10 +6,14 @@ import { combineReducers } from 'redux';
 
 import root from './root';
 import search from './search';
+import pageLoading from './pageLoading';
+import snack from './snack';
 
 export default combineReducers({
     routeReducer, // react router
     // custom reducers
     root,
-    search
+    search,
+    pageLoading,
+    snack
 });

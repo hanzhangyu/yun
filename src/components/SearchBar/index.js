@@ -2,6 +2,7 @@
  * Created by Paul on 2017/3/2.
  */
 import React from 'react';
+import classnames from 'classnames';
 
 import style from './style.less';
 import TextField from 'material-ui/TextField';
@@ -11,6 +12,8 @@ import FontIcon from 'material-ui/FontIcon';
 import SearchIcon from 'material-ui/svg-icons/action/search';
 import { grey900 } from 'material-ui/styles/colors';
 
+import searchImg from '../../layouts/images/search.png';
+
 import { KEYBOARD,SEARCH_KEYWORD } from '../../constants/const';
 
 class SearchBar extends React.Component {
@@ -19,6 +22,10 @@ class SearchBar extends React.Component {
         this.state = {
             keyword: ""
         };
+        this.onChangeInput = this.onChangeInput.bind(this);
+        this.onKeyUp = this.onKeyUp.bind(this);
+        this.onSearch = this.onSearch.bind(this);
+
     };
 
     static defaultProps = {
@@ -37,13 +44,15 @@ class SearchBar extends React.Component {
         this.setState({keyword: e.target.value})
     }
 
-    onKeyUp(e) {
-        if (e.keyCode == KEYBOARD.ENTER) {
-            console.log(this.props.btnImg)
-            console.log(this.props.btnLink)
-            console.log(this.props.btnText)
-            console.log(this.state.keyword)
+    onKeyUp(e, clicked) {
+        if (clicked === true || e.keyCode == KEYBOARD.ENTER) {
+            var link = this.props.btnLink;
+            window.open(link.replace(new RegExp(SEARCH_KEYWORD, 'i'), this.state.keyword));
         }
+    }
+
+    onSearch() {
+        this.onKeyUp(null, true)
     }
 
     componentWillReceiveProps(nextProps) {
@@ -56,19 +65,20 @@ class SearchBar extends React.Component {
 
     render() {
         const { btnImg,btnLink,btnText }=this.props;
-        let hasImg = btnImg == "";
         return (
             <div className={style.searchBarWrap}>
-                {
-                    hasImg && <img src={btnImg} alt=""/>
-                }
+                <img className={classnames('vm',style.img)} src={btnImg||searchImg} alt=""/>
                 <TextField
                     hintText={btnText}
                     fullWidth={true}
-                    onChange={this.onChangeInput.bind(this)}
-                    onKeyUp={this.onKeyUp.bind(this)}
+                    onChange={this.onChangeInput}
+                    onKeyUp={this.onKeyUp}
+                    inputStyle={{padding:'0 20px'}}
+                    hintStyle={{left:"20px"}}
+                    style={{overflow:'hidden'}}
                 />
-                <div className="icon-search"></div>
+                <div className={classnames('vm',style.btn)} onClick={this.onSearch}><span
+                    className="icon-search"></span></div>
             </div>
         )
     }

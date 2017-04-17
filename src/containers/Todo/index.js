@@ -64,11 +64,7 @@ class Search extends PureComponent {
 }
 
 // connect action to props
-const mapStateToProps = (state) => ({
-    data: {
-        root: state.root
-    }
-});
+const mapStateToProps = (state) => ({...state.root});
 // 使用对象扩展运算,绑定多个 action
 const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...rootActions}, dispatch)});
 

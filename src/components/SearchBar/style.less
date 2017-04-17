@@ -1,13 +1,23 @@
-.imgUpload{
-  width:150px;
-  height:150px;
-  margin:0 auto;
-  background-size: contain;
-  cursor:pointer;
-  & input{
-    width:100%;
-    height:100%;
-    opacity: 0;
-    cursor:pointer;
+@import "../../layouts/css/common.less";
+.searchBarWrap {
+  position: relative;
+  margin: 0 auto;
+  width: 70%;
+  .img {
+    left: 0;
+  }
+  .btn {
+    @height: 30px;
+    right: 0;
+    width: 10%;
+    height: @height;
+    text-align: center;
+    cursor: pointer;
+    span {
+      line-height: @height;
+    }
+    &:hover {
+      color: @bgColorStrong;
+    }
   }
 }

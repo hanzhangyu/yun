@@ -15,23 +15,24 @@ var WebpackDevServer = require('webpack-dev-server');
 var config = require('./config');
 var myConfig = require('./webpack.config.js');
 
-var open=(port)=>{
+var open = (port)=> {
     try {
-        spawn('360chrome', ['http://localhost:'+port]);
+        spawn('360chrome', ['http://localhost:' + port]);
     } catch (e) {
         console.log('no 360chrome')
     }
 };
 
-gulp.task('devServer', ['server'], function () {
-    new WebpackDevServer(webpack(myConfig), myConfig.devServer).listen(myConfig.devServer.port, 'localhost', function (err) {
-        if (err) {
-            throw new gutil.PluginError('webpack-dev-server', err);
-        }
-        gutil.log('[webpack-dev-server]', 'http://localhost:3000/');
-        open(myConfig.devServer.port);
-    })
-});
+// 弃用，发现使用这种配置webpack没有正确的使用react-hot，并且以前发现的webpack progress CLI问题没有得到解决
+//gulp.task('devServer', ['server'], function () {
+//    new WebpackDevServer(webpack(myConfig), myConfig.devServer).listen(myConfig.devServer.port, 'localhost', function (err) {
+//        if (err) {
+//            throw new gutil.PluginError('webpack-dev-server', err);
+//        }
+//        gutil.log('[webpack-dev-server]', 'http://localhost:3000/');
+//        open(myConfig.devServer.port);
+//    })
+//});
 
 gulp.task('build', ['clean'], function (callback) {
     webpack(require('./webpack.config.js'), function (err) {
@@ -81,6 +82,6 @@ gulp.task('clean', function () {
     }
 });
 
-gulp.task('default',['build','server'],function(){
+gulp.task('default', ['build', 'server'], function () {
     open(3001);
 });

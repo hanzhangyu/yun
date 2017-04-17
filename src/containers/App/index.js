@@ -12,9 +12,9 @@ import '../../layouts/css/reset.less';
 import style from './style.less';
 
 import rootActions from '../../actions/root';
-
+import pageLoadingActions from '../../actions/pageLoading';
+import snackActions from '../../actions/snack';
 import SearchPage from '../Search';
-
 import PureComponent from '../../components/PureComponent';
 import PageLoading from '../../components/PageLoading';
 import User from '../../components/User';
@@ -25,13 +25,10 @@ import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import MenuItem from 'material-ui/MenuItem';
 import Drawer from 'material-ui/Drawer';
-
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { grey900 } from 'material-ui/styles/colors';
-
 import MenuIcon from 'material-ui/svg-icons/navigation/menu';
-
-
+import Snackbar from 'material-ui/Snackbar';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
@@ -45,31 +42,26 @@ var L = require('../../i18n/locales/en_US');
 const LOCALE = getLocale(true);
 L = LOCALE.i18n;
 
-//L.label_drawer_site
-//L.label_drawer_pic
-//L.label_drawer_note
-//L.label_drawer_todo
-
 const NAV_CONFIG = {
     'search': {
-        path:'',
-        label:L.label_drawer_search
+        path: '',
+        label: L.label_drawer_search
     },
     'site': {
-        path:'site',
-        label:L.label_drawer_site
+        path: 'site',
+        label: L.label_drawer_site
     },
     'pic': {
-        path:'pic',
-        label:L.label_drawer_pic
+        path: 'pic',
+        label: L.label_drawer_pic
     },
     'note': {
-        path:'note',
-        label:L.label_drawer_note
+        path: 'note',
+        label: L.label_drawer_note
     },
     'todo': {
-        path:'todo',
-        label:L.label_drawer_todo
+        path: 'todo',
+        label: L.label_drawer_todo
     }
 };
 
@@ -96,8 +88,7 @@ class App extends PureComponent {
     }
 
     componentDidMount() {
-        const { actions,location } = this.props;
-        const { root } = this.props.data;
+        const { actions,location,currentPage } = this.props;
         /*
          location = {
          pathname, // 当前路径，即 Link 中的 to 属性
@@ -110,19 +101,18 @@ class App extends PureComponent {
          */
         // 检查是否非按钮导航
         const locationPage = location.pathname.split('/')[1];
-        map(NAV_CONFIG,(param,code)=>{
-            (locationPage==param.path)&&code!=root.get('currentPage')&&actions.switchCurrentPage(code);
+        map(NAV_CONFIG, (param, code)=> {
+            (locationPage == param.path) && code != currentPage && actions.switchCurrentPage(code);
         });
-        actions.getCurrentUser().then(()=>{
+        actions.getCurrentUser().then(()=> {
             actions.hidePageLoading();
         });
     }
 
     render() {
-        console.log('render')
+        console.log('renderApp')
         const { isDrawerOpened }=this.state;
-        const { children } = this.props;
-        const { root } = this.props.data;
+        const { children,pageLoading,currentPage,snackMsg,actions } = this.props;
 
         const NavDarwer = (props)=>(
             <IconButton onClick={this.toggleNav.bind(this)}>
@@ -132,16 +122,16 @@ class App extends PureComponent {
         return (
             <MuiThemeProvider>
                 <div>
-                    {root.get('pageLoading') && <PageLoading />}
+                    {pageLoading && <PageLoading />}
                     <Drawer
                         className={style.drawer}
                         open={isDrawerOpened}
                         docked={false}
                         onRequestChange={(isDrawerOpened) => this.setState({isDrawerOpened})}>
                         {
-                            map(NAV_CONFIG, (param,code)=><MenuItem key={code}
-                                                                    className={classnames(style.drawerPage,{[style.active]:root.get('currentPage')==code})}
-                                                                    onClick={this.onChangeCurrentPage.bind(this,code)}>{param.label}</MenuItem>)
+                            map(NAV_CONFIG, (param, code)=><MenuItem key={code}
+                                                                     className={classnames(style.drawerPage,{[style.active]:currentPage==code})}
+                                                                     onClick={this.onChangeCurrentPage.bind(this,code)}>{param.label}</MenuItem>)
                         }
                     </Drawer>
                     <AppBar
@@ -150,11 +140,16 @@ class App extends PureComponent {
                         iconElementLeft={<NavDarwer />}
                         iconElementRight={<User />}
                     />
-
                     {/* 主体 */}
                     {
                         children ? children : <SearchPage />
                     }
+                    <Snackbar
+                        open={snackMsg!=""}
+                        message={snackMsg}
+                        autoHideDuration={4000}
+                        onRequestClose={()=>{actions.snackChangeMsg()}}
+                    />
                 </div>
             </MuiThemeProvider>
         );
@@ -162,13 +157,13 @@ class App extends PureComponent {
 }
 
 // connect action to props
-const mapStateToProps = (state) => ({
-    data: {
-        root: state.root
-    }
+const mapStateToProps = (state) =>({
+    currentPage: state.root.currentPage,
+    ...state.pageLoading,
+    ...state.snack
 });
 // 使用对象扩展运算,绑定多个 action
-const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...rootActions}, dispatch)});
+const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...rootActions, ...pageLoadingActions, ...snackActions}, dispatch)});
 
 export default connect(
     mapStateToProps,

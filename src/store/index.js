@@ -30,14 +30,12 @@ export default (initialState) => {
 
 
     // 只在开发模式下配置模块热替换
-    if (process.env.NODE_ENV !== 'production') {
-        if (module.hot) {
-            console.log('hot');
-            module.hot.accept('../reducers', () => {
-                const nextReducer = require('../reducers');
-                store.replaceReducer(nextReducer);
-            });
-        }
+    if (process.env.NODE_ENV !== 'production' && module.hot) {
+        console.log('hot');
+        module.hot.accept('../reducers', () => {
+            const nextReducer = require('../reducers');
+            store.replaceReducer(nextReducer);
+        });
     }
 
     return store;

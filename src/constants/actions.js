@@ -8,9 +8,11 @@ export const HIDE_PAGE_LOADING = 'HIDE_PAGE_LOADING';
 
 // DOM操作
 export const SWITCH_CURRENT_PAGE = 'SWITCH_CURRENT_PAGE';
+export const SEARCH_CHANGE_CURRENT = 'SEARCH_CHANGE_CURRENT';
+export const SNACK_CHANGE_MSG = 'SNACK_CHANGE_MSG';
 
 
-// 数据操作
+// 数据交互操作
 export const GET_CURRENT_USER = 'GET_CURRENT_USER';
 export const USER_LOGIN = 'USER_LOGIN';
 export const USER_SIGN_UP = 'USER_SIGN_UP';
