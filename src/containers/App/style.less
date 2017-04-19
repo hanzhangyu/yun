@@ -1,5 +1,22 @@
 @import "../../layouts/css/common.less";
-@appBarHeight:72px !important;
+
+@appBarHeight: 72px !important;
+
+.mainBg {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  user-select: none;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: auto;
+  &.mobile {
+    width: auto;
+    height: 100%;
+  }
+}
 
 .appBar {
   height: @appBarHeight;
@@ -23,11 +40,11 @@
 }
 
 :global {
-  .main-content{
-    position:absolute;
-    top:@appBarHeight;
-    bottom:0;
-    left:0;
-    right:0;
+  .main-content {
+    position: absolute;
+    top: @appBarHeight;
+    bottom: 0;
+    left: 0;
+    right: 0;
   }
 }

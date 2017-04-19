@@ -7,6 +7,8 @@ import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import classnames from 'classnames';
 import { map } from 'lodash';
+import { Map } from 'immutable';
+import { getImgSizeBySrc } from '../../utils/help';
 
 import '../../layouts/css/reset.less';
 import style from './style.less';
@@ -69,7 +71,8 @@ class App extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            isDrawerOpened: false
+            isDrawerOpened: false,
+            isMobile:false
         };
     }
 
@@ -85,6 +88,20 @@ class App extends PureComponent {
     // 打开导航栏
     toggleNav() {
         this.setState({isDrawerOpened: !this.state.isDrawerOpened})
+    }
+
+    // 设置合适的背景样式
+    adaptBg() {
+        let imgSrc = this.props.systemConfigure.get('bgSrc');
+        getImgSizeBySrc(imgSrc, (size)=> {
+            let body = document.body;
+            if(size.width / size.height > body.offsetWidth / body.offsetHeight){
+                !this.state.isMobile&&this.setState({isMobile:true})
+            }else{
+                this.state.isMobile&&this.setState({isMobile:false})
+            }
+        });
+
     }
 
     componentDidMount() {
@@ -107,12 +124,16 @@ class App extends PureComponent {
         actions.getCurrentUser().then(()=> {
             actions.hidePageLoading();
         });
+
+        // 背景自适应
+        window.addEventListener('resize', this.adaptBg.bind(this));
     }
 
     render() {
+        this.adaptBg();
         console.log('renderApp')
-        const { isDrawerOpened }=this.state;
-        const { children,pageLoading,currentPage,snackMsg,actions } = this.props;
+        const { isDrawerOpened,isMobile }=this.state;
+        const { children,pageLoading,currentPage,snackMsg,actions,systemConfigure } = this.props;
 
         const NavDarwer = (props)=>(
             <IconButton onClick={this.toggleNav.bind(this)}>
@@ -122,6 +143,7 @@ class App extends PureComponent {
         return (
             <MuiThemeProvider>
                 <div>
+                    <img src={systemConfigure.get('bgSrc')} className={classnames(style.mainBg,{[style.mobile]:isMobile})} alt=""/>
                     {pageLoading && <PageLoading />}
                     <Drawer
                         className={style.drawer}
@@ -140,16 +162,16 @@ class App extends PureComponent {
                         iconElementLeft={<NavDarwer />}
                         iconElementRight={<User />}
                     />
-                    {/* 主体 */}
-                    {
-                        children ? children : <SearchPage />
-                    }
                     <Snackbar
                         open={snackMsg!=""}
                         message={snackMsg}
                         autoHideDuration={4000}
                         onRequestClose={()=>{actions.snackChangeMsg()}}
                     />
+                    {/* 主体 */}
+                    {
+                        children ? children : <SearchPage />
+                    }
                 </div>
             </MuiThemeProvider>
         );
@@ -159,6 +181,7 @@ class App extends PureComponent {
 // connect action to props
 const mapStateToProps = (state) =>({
     currentPage: state.root.currentPage,
+    systemConfigure: state.root.systemConfigure,
     ...state.pageLoading,
     ...state.snack
 });

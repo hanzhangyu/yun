@@ -1,24 +1,66 @@
 @import "../../layouts/css/common.less";
 
 .searchBarWrap {
+  @height: 40px;
+  @imgWidth: 16px;
+  @imgHeight: 16px;
+  @LeftPadding: 30px;
+  @sugHeight: 34px;
   position: relative;
   margin: 0 auto;
   width: 70%;
+  .input {
+    display: block;
+    overflow: hidden;
+    width: 90%;
+    box-sizing: border-box;
+    float: left;
+    height: @height;
+    padding: 5px @LeftPadding;
+    border: none;
+    outline: none;
+  }
   .img {
-    left: 0;
+    left: (@LeftPadding - @imgWidth)/2;
+    width: @imgWidth;
+    height: @imgHeight;
+    .vm();
   }
   .btn {
-    @height: 30px;
-    right: 0;
     width: 10%;
     height: @height;
     text-align: center;
     cursor: pointer;
+    float: left;
+    background: #fff;
     span {
       line-height: @height;
     }
     &:hover {
       color: @bgColorStrong;
+    }
+  }
+  .suggestions {
+    overflow: hidden;
+    position: absolute;
+    top: 41px;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    .slideDownMax(@sugHeight*5, .3s);
+    a {
+      display: block;
+      padding: 8px;
+      text-decoration: none;
+      color: @defaultFontColor;
+      height: @sugHeight;
+      box-sizing: border-box;
+      &.active {
+        background: @colorShallow;
+        text-decoration: underline;
+      }
     }
   }
 }

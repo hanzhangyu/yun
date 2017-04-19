@@ -5,7 +5,14 @@
 body, html {
   padding: 0;
   margin: 0;
+  height: 100%;
+  overflow: hidden;
   font-family: @defaultFontFamily
+}
+
+ul {
+  list-style: none;
+  padding: 0;
 }
 
 .sweet-alert, input, textarea, keygen, select, button {
@@ -57,10 +64,4 @@ body, html {
     clear: both;
     .mixClear()
   }
-}
-
-.vm{
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
 }

@@ -7,3 +7,32 @@
 @colorSuccess: rgb(47, 255, 12);
 @colorError: rgba(238, 0, 0, 0.65);
 @modelBgColor: rgba(0, 0, 0, 0.1);
+@defaultFontColor: #333;
+@colorShallow: #eee;
+
+.vm() {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.slideDownMax(@height,@time) {
+  animation: slideDown @time both;
+  @keyframes slideDown {
+    0% {
+      max-height: 0;
+    }
+    100% {
+      max-height: @height;
+    }
+  }
+}

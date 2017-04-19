@@ -2,14 +2,17 @@
  * Created by Paul on 2017/2/27.
  */
 import { handleActions } from 'redux-actions';
-import {Map} from 'immutable';
+import {Map,fromJS} from 'immutable';
 import { GET_CURRENT_USER,SWITCH_CURRENT_PAGE,USER_LOGIN,USER_SIGN_UP,
     USER_FORGET_PW,USER_CHANGE_PW,USER_CHANGE_NAME,USER_CHANGE_AVATAR,USER_LOGOUT } from '../constants/actions';
 
 const initialState = {
     user: Map({}),
     isLogin: null,
-    currentPage: null
+    currentPage: null,
+    systemConfigure: fromJS({
+        bgSrc: '/images/bg.jpg',
+    }),
 };
 
 const setCurrentUser = (state, action)=> {
