@@ -1,6 +1,8 @@
 // 公共资源引入，以及reset
 @import '../../../node_modules/sweetalert/dist/sweetalert.css';
+@import (less) '~perfect-scrollbar/dist/css/perfect-scrollbar.css';
 @import './common.less';
+@import './animate.css';
 
 body, html {
   padding: 0;
@@ -13,6 +15,11 @@ body, html {
 ul {
   list-style: none;
   padding: 0;
+  margin: 0;
+}
+
+figure {
+  margin: 0;
 }
 
 .sweet-alert, input, textarea, keygen, select, button {
@@ -50,6 +57,10 @@ ul {
   content: "\e9bd";
 }
 
+.icon-info:before {
+  content: "\ea0c";
+}
+
 .clearfix {
   zoom: 1;
   .mixClear() {
@@ -63,5 +74,35 @@ ul {
   &:after {
     clear: both;
     .mixClear()
+  }
+}
+
+.pos_re {
+  position: relative;
+}
+
+.right {
+  float: right;
+}
+
+.left {
+  float: left;
+}
+
+.hide {
+  display: none;
+}
+
+@keyframes zoomFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale3d(.3, .3, .3)
+  }
+  80% {
+    opacity: 1
+  }
+  100% {
+    opacity: 1;
+    transform: scale3d(1, 1, 1)
   }
 }

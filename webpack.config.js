@@ -93,7 +93,7 @@ module.exports = {
                 })
             },
             {
-                test: /\.less$/,
+                test: /\.(less|css)$/,
                 include: /src(\\|\/)layouts/,
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',

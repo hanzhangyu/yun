@@ -72,7 +72,7 @@ class App extends PureComponent {
         super(props);
         this.state = {
             isDrawerOpened: false,
-            isMobile:false
+            isMobile: false
         };
     }
 
@@ -95,10 +95,10 @@ class App extends PureComponent {
         let imgSrc = this.props.systemConfigure.get('bgSrc');
         getImgSizeBySrc(imgSrc, (size)=> {
             let body = document.body;
-            if(size.width / size.height > body.offsetWidth / body.offsetHeight){
-                !this.state.isMobile&&this.setState({isMobile:true})
-            }else{
-                this.state.isMobile&&this.setState({isMobile:false})
+            if (size.width / size.height > body.offsetWidth / body.offsetHeight) {
+                !this.state.isMobile && this.setState({isMobile: true})
+            } else {
+                this.state.isMobile && this.setState({isMobile: false})
             }
         });
 
@@ -143,7 +143,8 @@ class App extends PureComponent {
         return (
             <MuiThemeProvider>
                 <div>
-                    <img src={systemConfigure.get('bgSrc')} className={classnames(style.mainBg,{[style.mobile]:isMobile})} alt=""/>
+                    <img src={systemConfigure.get('bgSrc')}
+                         className={classnames(style.mainBg,{[style.mobile]:isMobile})} alt=""/>
                     {pageLoading && <PageLoading />}
                     <Drawer
                         className={style.drawer}

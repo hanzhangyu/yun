@@ -1,5 +1,5 @@
 {
-  "common":[
+  "common": [
     {
       "url": "/imgUpload",
       "desc": "图片上传",
@@ -16,7 +16,7 @@
       }
     }
   ],
-  "user":[
+  "user": [
     {
       "url": "/login",
       "desc": "登录---400登录失败，邮箱或密码错误---200成功",
@@ -39,7 +39,7 @@
             "Manager",
             "Operator"
           ],
-          "img":"/images/user_girl_default.jpg"
+          "img": "/images/user_girl_default.jpg"
         }
       }
     },
@@ -65,7 +65,7 @@
             "Manager",
             "Operator"
           ],
-          "img":"/images/user_girl_default.jpg"
+          "img": "/images/user_girl_default.jpg"
         }
       }
     },
@@ -87,7 +87,7 @@
             "Manager",
             "Operator"
           ],
-          "img":"/images/user_girl_default.jpg"
+          "img": "/images/user_girl_default.jpg"
         }
       }
     },
@@ -138,13 +138,13 @@
       "desc": "修改用户头像",
       "method": "POST",
       "req": {
-        "src":  "/images/user_boy_default.jpg"
+        "src": "/images/user_boy_default.jpg"
       },
       "res": {
         "code": 200,
         "msg": "Change Username success",
         "data": {
-          "src":  "/images/user_boy_default.jpg"
+          "src": "/images/user_boy_default.jpg"
         }
       }
     },
@@ -158,6 +158,141 @@
         "code": 200,
         "msg": "注销成功",
         "data": true
+      }
+    }
+  ],
+  "search": [
+    {
+      "url": "/searchData",
+      "desc": "拉取",
+      "method": "POST",
+      "delay": 200,
+      "mock": true,
+      "res": {
+        "code": 200,
+        "msg": "Get searchData successfully!",
+        "data": {
+          "currentSearch": {
+            "id": 0,
+            "img": "/images/baidu.png",
+            "name": "百度",
+            "hide": false,
+            "open": true,
+            "link": "https://www.baidu.com/s?wd=%keyword%"
+          },
+          "searchList|20": [
+            {
+              "id|+1": 0,
+              "img|+1": [
+                "/images/youdao.png",
+                "/images/baidu.png",
+                "/images/360.png",
+                "/images/google.png",
+                "/images/JD.png",
+                "/images/tianmao.png"
+              ],
+              "name|+1": [
+                "有道",
+                "百度",
+                "360",
+                "Google",
+                "天猫",
+                "JD"
+              ],
+              "hide|1": true,
+              "open|1": true,
+              "link|1": [
+                "http://www.youdao.com/search?q=%keyword%&keyfrom=360se_06",
+                "https://www.baidu.com/s?wd=%keyword%",
+                "https://www.so.com/s?ie=utf-8&src=360chrome_toolbar_search&q=%keyword%",
+                "https://www.google.com/s?q=%keyword%",
+                "http://search.jd.com/Search?keyword=%keyword%&enc=utf-8",
+                "http://list.tmall.com/search_product.htm?q=%keyword%&type=p&from=..pc_1_opensearch"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "url": "/deleteSearch",
+      "desc": "删除",
+      "method": "POST",
+      "delay": 200,
+      "mock": true,
+      "res": {
+        "code": 200,
+        "msg": "删除成功",
+        "data": true
+      }
+    },
+    {
+      "url": "/addSearch",
+      "desc": "添加",
+      "method": "POST",
+      "delay": 200,
+      "mock": true,
+      "res": {
+        "code": 200,
+        "msg": "添加成功",
+        "data|+1": 1000
+      }
+    },
+    {
+      "url": "/modifySearch",
+      "desc": "修改",
+      "method": "POST",
+      "delay": 200,
+      "mock": true,
+      "res": {
+        "code": 200,
+        "msg": "修改成功",
+        "data": true
+      }
+    }
+  ],
+  "site": [
+    {
+      "url": "/getSite",
+      "desc": "修改",
+      "method": "POST",
+      "delay": 200,
+      "mock": true,
+      "res": {
+        "code": 200,
+        "msg": "修改成功",
+        "data|30": [
+          {
+            "id|+1": 0,
+            "img|+1": [
+              "images/random01.jpg",
+              "images/random02.jpg",
+              "images/random03.jpg",
+              "images/random1.jpg"
+            ],
+            "title": "@ctitle(5, 20)",
+            "summary|1": [
+              "@paragraph()",
+              "@cparagraph"
+            ],
+            "link": "@domain()",
+            "date|1": [
+              "2014-12-27",
+              "2015-12-27",
+              "2016-12-27",
+              "2017-12-27",
+              "2013-12-27",
+              "2012-12-27",
+              "2011-12-27",
+              "2010-10-20",
+              "2010-01-04",
+              "2008-05-19",
+              "2008-01-04",
+              "2008-01-04",
+              "1985-07-24"
+            ]
+          }
+        ]
       }
     }
   ]

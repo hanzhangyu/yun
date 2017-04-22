@@ -21,4 +21,10 @@ export const USER_CHANGE_PW = 'USER_CHANGE_PW';
 export const USER_CHANGE_NAME = 'USER_CHANGE_NAME';
 export const USER_CHANGE_AVATAR = 'USER_CHANGE_AVATAR';
 export const USER_LOGOUT = 'USER_LOGOUT';
+export const SEARCH_GET = 'SEARCH_GET';
+export const SEARCH_DELETE = 'SEARCH_DELETE';
+export const SEARCH_ADD = 'SEARCH_ADD';
+export const SEARCH_MODIFY = 'SEARCH_MODIFY';
+export const SITE_GET = 'SITE_GET';
+
 

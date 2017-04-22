@@ -1,0 +1,59 @@
+@import "../../layouts/css/common.less";
+
+.SearchBar, .toolbar {
+  width: 70%;
+  margin: 0 auto;
+}
+
+.siteListWrap {
+  position: relative;
+  text-align: center;
+}
+
+.siteTime {
+  text-align: center;
+  font-size: 36px;
+  margin: 50px 0 20px;
+  width: 100%;
+}
+
+.card {
+  width: 17%;
+  margin: 20px 4%;
+  display: inline-block;
+  opacity: 0;
+  &.loaded {
+    :global {
+      animation-name: zoomFadeIn;
+    }
+    animation-duration: .3s;
+    animation-fill-mode: both;
+  }
+}
+
+.cardTitle {
+  span {
+    .noWrap();
+  }
+}
+
+.cardConent {
+  padding: 0 16px !important;
+  margin: 16px 0 2px;
+}
+
+.cardText {
+  height: 80px;
+  line-height: 20px;
+  overflow: hidden;
+}
+
+.cardLink {
+  padding-top: 8px;
+  color: gray;
+  .noWrap();
+}
+
+.keyword {
+  color: red;
+}

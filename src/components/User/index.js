@@ -11,6 +11,8 @@ import classnames from 'classnames';
 import rootActions from '../../actions/root';
 import snackActions from '../../actions/snack';
 
+import ImgUpload from '../../components/ImgUpload';
+
 import style from './style.less';
 import userBoyImg from '../../layouts/images/user_boy_default.jpg';
 
@@ -23,8 +25,6 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
-
-import ImgUpload from '../../components/ImgUpload';
 
 // 国际化
 import { getAllLocales, getLocale, setLocale} from '../../i18n';
@@ -379,7 +379,7 @@ class User extends PureComponent {
                         className={style.dialog}
                     >
                         <div className={style.content}>
-                            <h3>请点击图片选择您要上传的图片</h3>
+                            <h3>{L.title_imgUpload}</h3>
                             <ImgUpload
                                 initImgSrc={user.get('img')}
                                 onChange={this.imgUploaded}/>

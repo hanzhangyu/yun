@@ -109,5 +109,13 @@ export default {
     imgUpload: params => request(getApi('/imgUpload'), params, METHOD.POST, false, true),
     logout: params => request(getApi('/logout'), params, METHOD.GET),
 
+    // search
     getBaiduKeyWord: (params, callbackName) => requestJsonp('https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su', params, callbackName),
+    getSearchData: params => request(getApi('/searchData'), params),
+    deleteSearch: params => request(getApi('/deleteSearch'), params, METHOD.POST, true),
+    addSearch: params => request(getApi('/addSearch'), params, METHOD.POST, true),
+    modifySearch: params => request(getApi('/modifySearch'), params, METHOD.POST, true),
+
+    // site
+    getSite: params=> request(getApi('/getSite'), params),
 }
