@@ -22,12 +22,34 @@
   margin: 20px 4%;
   display: inline-block;
   opacity: 0;
+  cursor:pointer;
+  .checkbox {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    div {
+      margin: 0 !important;
+    }
+    svg{
+      right:0;
+    }
+  }
   &.loaded {
     :global {
       animation-name: zoomFadeIn;
     }
     animation-duration: .3s;
     animation-fill-mode: both;
+  }
+  overflow: hidden;
+  img {
+    transition: transform 0.5s;
+  }
+  &:hover {
+    img {
+      transform: scale(1.1);
+    }
   }
 }
 

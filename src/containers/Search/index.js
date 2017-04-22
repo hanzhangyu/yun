@@ -96,14 +96,7 @@ class Search extends PureComponent {
             isUpload: false,
             modifyMode: false,
             deleteMode: false,
-            dialogImg: '',
-            dialogDefaultName: '',
-            dialogDefaultLink: '',
-            dialogDefaultHide: false,
-            dialogDefaultOpen: true,
-            dialogDefaultImg: '',
-            dialogErrorMsg: '',
-            dialogModifyId: null
+            ...DIALOG_DEFAULT
         };
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onSearch = this.onSearch.bind(this);
@@ -446,7 +439,7 @@ class Search extends PureComponent {
                                                 </div>
                                             ) : null
                                         }
-                                        <figure style={{backgroundImage:`url(${param.img})`}}></figure>
+                                        <figure className="hoverZoom" style={{backgroundImage:`url(${param.img})`}}></figure>
                                         <span>{param.name}</span>
                                     </li>
                                 ) : null))

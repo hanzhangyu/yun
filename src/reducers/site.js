@@ -3,7 +3,8 @@
  */
 import { handleActions } from 'redux-actions';
 import {fromJS,List} from 'immutable';
-import { SITE_GET,SITE_SEARCH } from '../constants/actions';
+import {map} from 'lodash';
+import { SITE_GET,SITE_SEARCH,SITE_DELETE } from '../constants/actions';
 import { checkError,insertionSort } from '../utils/help';
 
 const initialState = {
@@ -41,5 +42,53 @@ const adaptData = (state, action)=> {
 
 export default handleActions({
     [SITE_GET]: checkError(adaptData),
-    [SITE_SEARCH]: checkError(adaptData)
+    [SITE_SEARCH]: checkError(adaptData),
+    [SITE_DELETE]: checkError((state, action)=> {
+        let siteObj = state.siteObj;
+        siteObj = fromJS({
+            "2017-12-27": [
+                {
+                    id: 1
+                },
+                {
+                    id: 2
+                },
+                {
+                    id: 3
+                },
+                {
+                    id: 4
+                }
+            ],
+            "2016-12-27": [
+                {
+                    id: 4
+                },
+                {
+                    id: 5
+                },
+                {
+                    id: 3
+                },
+                {
+                    id: 6
+                }
+            ]
+        });
+        console.warn(siteObj.toJS());
+        console.warn(action.payload);
+        map(action.payload, (val, date)=> {
+            let items = siteObj.get(date).toJS();
+            console.log(items)
+            for (let i = items.length - 1; i >= 0; i--) {
+                console.info(val)
+                console.log(items[i].id)
+                val.findIndex(id=>id == items[i].id) >= 0 && (siteObj = siteObj.update(date, items=> {
+                    return items.delete(i)
+                }))
+            }
+        });
+        console.warn(siteObj.toJS());
+        return state
+    })
 }, initialState);

@@ -14,6 +14,7 @@ import {map} from 'lodash';
 import style from './style.less';
 
 import siteActions from '../../actions/site';
+import snackActions from '../../actions/snack';
 
 import PureComponent from '../../components/PureComponent';
 
@@ -43,6 +44,10 @@ const btnStyle = {
     padding: '12px'
 };
 
+const checkboxStyle = {
+    background: '#fff'
+};
+
 const imgOnLoad = e=> {
     e.currentTarget.classList.add(style.loaded);
 };
@@ -57,35 +62,62 @@ const imgOnError = e=> {
     });
 };
 
-const getJsxByTime = (siteObj, timeArray)=> {
+const getJsxByTime = (siteObj, timeArray, deleteMode, checkObj, onClick)=> {
     let result = [];
     timeArray.forEach(time=> {
         let list = siteObj.get(time);
         result.push(<div className={style.siteTime} key={time}>{time}</div>);
-        list && result.push(list.map((val, index)=>(
-            <div className={style.card}
-                 key={time.toString()+index}
-                 onError={imgOnError}
-                 onLoad={imgOnLoad}>
-                <Card>
-                    <CardMedia
-                        overlay={<CardTitle className={style.cardTitle} title={val.get('title')}/>}
-                    >
-                        <img src={val.get('img')}/>
-                    </CardMedia>
-                    <CardText className={style.cardConent}>
-                        <div className={style.cardText}>
-                            {val.get('summary')}
-                        </div>
-                        <div className={style.cardLink}>
-                            {val.get('link')}
-                        </div>
-                    </CardText>
-                </Card>
-            </div>
-        )))
+        list && result.push(list.map((val, index)=> {
+            let title = val.get('title'),
+                summary = val.get('summary'),
+                link = val.get('link');
+            return (
+                <div className={style.card}
+                     key={time.toString()+index}
+                     onClick={()=>{onClick(val)}}
+                     onError={imgOnError}
+                     onLoad={imgOnLoad}>
+                    {
+                        deleteMode ? (
+                            <div
+                                style={checkboxStyle}
+                                className={style.checkbox}>
+                                <Checkbox checked={checkObj[val.get('id')]}/>
+                            </div>
+                        ) : null
+                    }
+                    <Card>
+                        <CardMedia
+                            title={title}
+                            className='overflow'
+                            overlay={<CardTitle className={style.cardTitle} title={title}/>}
+                        >
+                            <img src={val.get('img')}/>
+                        </CardMedia>
+                        <CardText className={style.cardConent}>
+                            <div className={style.cardText} title={summary}>
+                                {summary}
+                            </div>
+                            <div className={style.cardLink} title={link}>
+                                {link}
+                            </div>
+                        </CardText>
+                    </Card>
+                </div>
+            )
+        }))
     });
     return result;
+};
+
+const DIALOG_DEFAULT = {
+    dialogImg: '',
+    dialogDefaultTitle: '',
+    dialogDefaultSummary: "",
+    dialogDefaultLink: '',
+    dialogDefaultImg: '',
+    dialogErrorMsg: '',
+    dialogModifyId: null
 };
 
 class Search extends PureComponent {
@@ -94,8 +126,19 @@ class Search extends PureComponent {
         this.state = {
             listHeight: 'auto',
             keyword: '',
+            dialogOpen: false,
+            checkObj: {},
+            isUpload: false,
+            modifyMode: false,
+            deleteMode: false,
+            ...DIALOG_DEFAULT
+
         };
         this.onKeyDown = this.onKeyDown.bind(this);
+        this.onClick = this.onClick.bind(this);
+        this.openDeleteMode = this.openDeleteMode.bind(this);
+        this.openModifyMode = this.openModifyMode.bind(this);
+        this.onChangeImgType = this.onChangeImgType.bind(this);
     }
 
     fixHeight() {
@@ -110,6 +153,21 @@ class Search extends PureComponent {
         if (e.keyCode == KEYBOARD.ENTER && value != this.state.keyword) {
             this.setState({keyword: value});
             this.props.actions.searchSite({s: value})
+        }
+    }
+
+    onClick(site) {
+        if (this.state.deleteMode) {
+            let index = site.get('id');
+            this.setState((state)=> {
+                state.checkObj[index] = !state.checkObj[index];
+                return state;
+            })
+        } else if (this.state.modifyMode) {
+
+        } else {
+            console.log(site.get('link'));
+            //window.open(site.get('link'));
         }
     }
 
@@ -129,7 +187,7 @@ class Search extends PureComponent {
                     val && deleteArray.push(index)
                 });
                 // 是否有做改变
-                deleteArray.length > 0 ? this.props.actions.deleteSearch(deleteArray, checkObj).then((data)=> {
+                deleteArray.length > 0 ? this.props.actions.deleteSite(deleteArray).then((data)=> {
                     if (!data.error) {
                         this.props.actions.snackChangeMsg(L.tip_action_deleteSuccess);
                         this.setState({deleteMode: false});
@@ -153,10 +211,16 @@ class Search extends PureComponent {
         this.setState({dialogOpen: true, ...othersState})
     }
 
+    onChangeImgType() {
+
+    }
+
     openDeleteMode() {
         let checkObj = {};
-        this.props.searchList.forEach((search)=> {
-            checkObj[search.get('id')] = false
+        this.props.siteObj.forEach((items, index)=> {
+            items.forEach((item)=> {
+                checkObj[item.get('id')] = false
+            });
         });
         this.setState({deleteMode: true, modifyMode: false, checkObj: checkObj})
     }
@@ -184,7 +248,7 @@ class Search extends PureComponent {
 
     render() {
         const {siteObj,timeArray}=this.props;
-        const {listHeight}=this.state;
+        const {listHeight,deleteMode,checkObj,modifyMode}=this.state;
         return (
             <div className={classnames('main-content',style.mainSite)} ref="site">
                 <section className={style.SearchBar} ref="searchBar">
@@ -198,7 +262,7 @@ class Search extends PureComponent {
                 </section>
                 {/* 工具条 */}
                 <section className={classnames('clearfix',style.toolbar)} ref="toolbar">
-                    <div className={classnames('left')}>
+                    <div className={classnames('left',{'hide':!deleteMode&&!modifyMode})}>
                         <IconButton
                             onClick={this.closeMode.bind(this,false)}
                             style={btnStyle}>
@@ -208,7 +272,7 @@ class Search extends PureComponent {
                             />
                         </IconButton>
                     </div>
-                    <div className={classnames('left')}>
+                    <div className={classnames('left',{'hide':!deleteMode})}>
                         <IconButton
                             onClick={this.closeMode.bind(this,true)}
                             style={btnStyle}>
@@ -245,7 +309,7 @@ class Search extends PureComponent {
                 </section>
                 <section className={style.siteListWrap} style={{height:listHeight}} ref="list">
                     {
-                        getJsxByTime(siteObj, timeArray)
+                        getJsxByTime(siteObj, timeArray, deleteMode, checkObj, this.onClick)
                     }
                     <div style={{clear:'both'}}>123123</div>
                 </section>
@@ -257,7 +321,7 @@ class Search extends PureComponent {
 // connect action to props
 const mapStateToProps = (state) => ({...state.site});
 // 使用对象扩展运算,绑定多个 action
-const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...siteActions}, dispatch)});
+const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...siteActions, ...snackActions}, dispatch)});
 
 export default connect(
     mapStateToProps,
