@@ -26,5 +26,6 @@ export const SEARCH_DELETE = 'SEARCH_DELETE';
 export const SEARCH_ADD = 'SEARCH_ADD';
 export const SEARCH_MODIFY = 'SEARCH_MODIFY';
 export const SITE_GET = 'SITE_GET';
+export const SITE_SEARCH = 'SITE_SEARCH';
 
 

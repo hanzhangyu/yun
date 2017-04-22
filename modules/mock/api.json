@@ -253,8 +253,9 @@
   ],
   "site": [
     {
-      "url": "/getSite",
-      "desc": "修改",
+      "url": "/(getSite|searchSite)",
+      "regex": true,
+      "desc": "获取site列表",
       "method": "POST",
       "delay": 200,
       "mock": true,

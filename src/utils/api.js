@@ -118,4 +118,5 @@ export default {
 
     // site
     getSite: params=> request(getApi('/getSite'), params),
+    searchSite: params=> request(getApi('/searchSite'), params, METHOD.GET),
 }

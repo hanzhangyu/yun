@@ -6,8 +6,10 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import classnames from 'classnames';
+import { KEYBOARD } from '../../constants/const';
 import { perfectScroll,perfectScrollUpdate } from '../../utils/help';
 import {ERROR_IMG} from '../../constants/const';
+import {map} from 'lodash';
 
 import style from './style.less';
 
@@ -55,61 +57,33 @@ const imgOnError = e=> {
     });
 };
 
-// 将string数据转化成包含JSX对象的数组
-const replaceByKeyword = (string, keyword)=> {
-    let array = string.split(keyword);
-    for (let i = array.length - 1; i >= 0; i--) {
-        array.splice(i, 0, (<span className={style.keyword} key={i}>{keyword}</span>));
-    }
-    return array
-};
-const getJsxByTime = (siteObj, timeArray, keyword)=> {
+const getJsxByTime = (siteObj, timeArray)=> {
     let result = [];
     timeArray.forEach(time=> {
         let list = siteObj.get(time);
-        let shouldPush = false;
-        // 将items从siteObj中提取出来，对应的list不存在就返回空对象
-        let items = list && list.map((val, index)=> {
-                let title = val.get('title'),
-                    summary = val.get('summary'),
-                    link = val.get('link'),
-                    titleHas = title.indexOf(keyword) != -1,
-                    summaryHas = summary.indexOf(keyword) != -1,
-                    linkHas = link.indexOf(keyword) != -1;
-                if (!titleHas && !summaryHas && !linkHas) {
-                    return null
-                } else {
-                    if (!shouldPush) {
-                        shouldPush = true
-                    }
-                    titleHas && (title = replaceByKeyword(title, keyword));
-                    summaryHas && (summary = replaceByKeyword(summary, keyword));
-                    linkHas && (link = replaceByKeyword(link, keyword));
-                    return (
-                        <div className={style.card}
-                             key={time.toString()+index}
-                             onError={imgOnError}
-                             onLoad={imgOnLoad}>
-                            <Card>
-                                <CardMedia
-                                    overlay={<CardTitle className={style.cardTitle} title={title}/>}
-                                >
-                                    <img src={val.get('img')}/>
-                                </CardMedia>
-                                <CardText className={style.cardConent}>
-                                    <div className={style.cardText}>
-                                        {summary}
-                                    </div>
-                                    <div className={style.cardLink}>
-                                        {link}
-                                    </div>
-                                </CardText>
-                            </Card>
+        result.push(<div className={style.siteTime} key={time}>{time}</div>);
+        list && result.push(list.map((val, index)=>(
+            <div className={style.card}
+                 key={time.toString()+index}
+                 onError={imgOnError}
+                 onLoad={imgOnLoad}>
+                <Card>
+                    <CardMedia
+                        overlay={<CardTitle className={style.cardTitle} title={val.get('title')}/>}
+                    >
+                        <img src={val.get('img')}/>
+                    </CardMedia>
+                    <CardText className={style.cardConent}>
+                        <div className={style.cardText}>
+                            {val.get('summary')}
                         </div>
-                    )
-                }
-            });
-        shouldPush && result.push(<div className={style.siteTime} key={time}>{time}</div>, items);
+                        <div className={style.cardLink}>
+                            {val.get('link')}
+                        </div>
+                    </CardText>
+                </Card>
+            </div>
+        )))
     });
     return result;
 };
@@ -118,7 +92,8 @@ class Search extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            listHeight: 'auto'
+            listHeight: 'auto',
+            keyword: '',
         };
         this.onKeyDown = this.onKeyDown.bind(this);
     }
@@ -130,9 +105,11 @@ class Search extends PureComponent {
     }
 
     onKeyDown(e) {
+        let value = e.target.value;
         // 搜索
-        if (e.keyCode == KEYBOARD.ENTER) {
-
+        if (e.keyCode == KEYBOARD.ENTER && value != this.state.keyword) {
+            this.setState({keyword: value});
+            this.props.actions.searchSite({s: value})
         }
     }
 
@@ -187,6 +164,20 @@ class Search extends PureComponent {
     openModifyMode() {
         this.props.actions.snackChangeMsg(L.tip_action_modify);
         this.setState({modifyMode: true, deleteMode: false})
+    }
+
+    componentDidUpdate() {
+        let keyword = this.state.keyword;
+        if (keyword.length > 0 && document.getElementsByClassName(style.keyword).length == 0) {
+            const replaceKeyword = (e)=> {
+                e.innerHTML = e.innerHTML.replace(new RegExp(keyword, 'ig'), "<span class=" + style.keyword + ">$&</span>");
+                console.log(e.innerHTML)
+            };
+            map(document.querySelectorAll(`.${style.cardTitle} span`), replaceKeyword);
+            map(document.getElementsByClassName(style.siteTime), replaceKeyword);
+            map(document.getElementsByClassName(style.cardText), replaceKeyword);
+            map(document.getElementsByClassName(style.cardLink), replaceKeyword);
+        }
     }
 
     componentDidMount() {
@@ -268,7 +259,7 @@ class Search extends PureComponent {
                 </section>
                 <section className={style.siteListWrap} style={{height:listHeight}} ref="list">
                     {
-                        getJsxByTime(siteObj, timeArray, "P")
+                        getJsxByTime(siteObj, timeArray)
                     }
                     <div style={{clear:'both'}}>123123</div>
                 </section>
