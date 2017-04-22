@@ -322,6 +322,26 @@
           ]
         }
       }
+    },
+    {
+      "url": "/addSite",
+      "desc": "删除",
+      "method": "POST",
+      "delay": 200,
+      "mock": true,
+      "req": {},
+      "res": {
+        "code": 200,
+        "msg": "删除成功",
+        "data": {
+          "id|+1": 1000,
+          "img": "images/random01.jpg",
+          "title": "@这里是title",
+          "summary|1": "这是里summary",
+          "link": "www.paulhan.cn",
+          "date|1": "2017-12-27"
+        }
+      }
     }
   ]
 }

@@ -273,7 +273,7 @@ class Search extends PureComponent {
                 if (this.state.modifyMode) {
                     callback('modifySearch', L.tip_action_modifySuccess, L.tip_action_modifyFailed, {id: this.state.dialogModifyId})
                 } else {
-                    callback('snackChangeMsg', L.tip_action_addSuccess, L.tip_action_addFailed)
+                    callback('addSearch', L.tip_action_addSuccess, L.tip_action_addFailed)
                 }
             }
         } else {

@@ -6,9 +6,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import classnames from 'classnames';
-import { KEYBOARD } from '../../constants/const';
+import { KEYBOARD,DEFAULT_UPLOAD_IMG,ERROR_IMG } from '../../constants/const';
 import { perfectScroll,perfectScrollUpdate } from '../../utils/help';
-import {ERROR_IMG} from '../../constants/const';
 import {map} from 'lodash';
 
 import style from './style.less';
@@ -17,7 +16,12 @@ import siteActions from '../../actions/site';
 import snackActions from '../../actions/snack';
 
 import PureComponent from '../../components/PureComponent';
+import ImgUpload from '../../components/ImgUpload';
 
+import ReactTooltip from 'react-tooltip'
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
+import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import TextField from 'material-ui/TextField';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import Checkbox from 'material-ui/Checkbox';
@@ -46,6 +50,32 @@ const btnStyle = {
 
 const checkboxStyle = {
     background: '#fff'
+};
+
+const taggleCenterStyle = {
+    width: 'auto',
+    float: 'left',
+    position: 'absolute',
+    top: '50%',
+    marginRight: '0',
+    transform: 'translateY(-50%)'
+};
+
+const displayInline = {
+    display: "inline-block",
+    width: 'auto',
+    margin: '10px',
+    textAlign: 'left'
+};
+
+const labelStyle = {
+    width: 'auto'
+};
+
+const IMG_TYPE = {
+    random: 0,
+    link: 1,
+    upload: 2
 };
 
 const imgOnLoad = e=> {
@@ -128,7 +158,7 @@ class Search extends PureComponent {
             keyword: '',
             dialogOpen: false,
             checkObj: {},
-            isUpload: false,
+            imageType: IMG_TYPE.random,
             modifyMode: false,
             deleteMode: false,
             ...DIALOG_DEFAULT
@@ -139,6 +169,7 @@ class Search extends PureComponent {
         this.openDeleteMode = this.openDeleteMode.bind(this);
         this.openModifyMode = this.openModifyMode.bind(this);
         this.onChangeImgType = this.onChangeImgType.bind(this);
+        this.imgUploaded = this.imgUploaded.bind(this);
     }
 
     fixHeight() {
@@ -211,8 +242,54 @@ class Search extends PureComponent {
         this.setState({dialogOpen: true, ...othersState})
     }
 
-    onChangeImgType() {
+    closeDialog(confirm) {
+        if (confirm) {
+            let {dialogInputLink,dialogInputTitle ,dialogInputSummary ,dialogImg,}=this.refs;
+            let link = dialogInputLink.getValue();
+            let title = dialogInputTitle.getValue() || null;
+            let summary = dialogInputSummary.getValue() || null;
+            let imageType = this.state.imageType;
+            let img = imageType == IMG_TYPE.upload ? this.state.dialogImg : imageType == IMG_TYPE.link ? dialogImg.getValue() : null;
+            // 输入验证
+            if (link.length == 0) {
+                this.setState({dialogErrorMsg: L.tip_form_link_error})
+            } else if (imageType != IMG_TYPE.random && img.length == 0) {
+                this.setState({dialogErrorMsg: L.tip_form_imgSrc_error})
+            } else {
+                this.setState({dialogErrorMsg: ''});
+                // 同一提交函数
+                let callback = (action, msgSuccess, msgFailed, idObj = {})=> {
+                    this.props.actions[action]({img, name, link, hide, open, ...idObj}).then((data)=> {
+                        if (!data.error) {
+                            this.props.actions.snackChangeMsg(msgSuccess);
+                            this.setState({dialogOpen: false, ...DIALOG_DEFAULT})
+                        } else {
+                            this.props.actions.snackChangeMsg(msgFailed);
+                        }
+                    });
+                    console.info({img, name, link, hide, open, ...idObj})
+                };
 
+                // 区分修改还是添加
+                if (this.state.modifyMode) {
+                    //callback('modifySearch', L.tip_action_modifySuccess, L.tip_action_modifyFailed, {id: this.state.dialogModifyId})
+                } else {
+                    callback('snackChangeMsg', L.tip_action_addSuccess, L.tip_action_addFailed)
+                }
+            }
+        } else {
+            this.setState({dialogOpen: false, dialogErrorMsg: ''})
+        }
+    }
+
+    imgUploaded(err, src) {
+        if (!err) {
+            this.setState({dialogImg: src})
+        }
+    }
+
+    onChangeImgType(e, value) {
+        this.setState({imageType: value});
     }
 
     openDeleteMode() {
@@ -248,9 +325,22 @@ class Search extends PureComponent {
 
     render() {
         const {siteObj,timeArray}=this.props;
-        const {listHeight,deleteMode,checkObj,modifyMode}=this.state;
+        const {listHeight,deleteMode,checkObj,modifyMode,dialogOpen,dialogDefaultTitle, dialogDefaultSummary,dialogDefaultLink ,
+            dialogDefaultImg ,dialogErrorMsg ,imageType}=this.state;
+        const actions = [
+            <FlatButton
+                label={L.label_btn_cancel}
+                onTouchTap={this.closeDialog.bind(this,false)}
+            />,
+            <FlatButton
+                label={imageType==IMG_TYPE.random?L.label_btn_confirm:L.label_btn_next}
+                primary={true}
+                onTouchTap={this.closeDialog.bind(this,true)}
+            />
+        ];
         return (
             <div className={classnames('main-content',style.mainSite)} ref="site">
+                <ReactTooltip effect="solid"/>
                 <section className={style.SearchBar} ref="searchBar">
                     <TextField
                         hintText={<span className="icon-search"></span>}
@@ -311,8 +401,80 @@ class Search extends PureComponent {
                     {
                         getJsxByTime(siteObj, timeArray, deleteMode, checkObj, this.onClick)
                     }
-                    <div style={{clear:'both'}}>123123</div>
                 </section>
+                {/* 对话框 */}
+                <Dialog
+                    actions={actions}
+                    modal={false}
+                    open={dialogOpen}
+                    onRequestClose={this.closeDialog.bind(this,false)}
+                >
+                    <ReactTooltip effect="solid"/>
+                    <TextField
+                        floatingLabelText={L.label_input_link}
+                        fullWidth={true}
+                        ref="dialogInputLink"
+                        defaultValue={dialogDefaultLink}
+                    />
+                    <TextField
+                        floatingLabelText={L.label_input_siteTitle}
+                        fullWidth={true}
+                        ref="dialogInputTitle"
+                        data-tip={L.label_input_siteAutoTip}
+                        defaultValue={dialogDefaultTitle}
+                    />
+                    <TextField
+                        floatingLabelText={L.label_input_siteSummary}
+                        fullWidth={true}
+                        ref="dialogInputSummary"
+                        data-tip={L.label_input_siteAutoTip}
+                        multiLine={true}
+                        rows={2}
+                        rowsMax={4}
+                        defaultValue={dialogDefaultSummary}
+                    />
+                    <div className='pos_re'>
+                        <RadioButtonGroup name="shipSpeed"
+                                          defaultSelected={imageType}
+                                          onChange={this.onChangeImgType}
+                                          className={style.radioGroup}>
+                            <RadioButton
+                                style={displayInline}
+                                labelStyle={labelStyle}
+                                value={IMG_TYPE.random}
+                                label={L.label_radio_random}
+                            />
+                            <RadioButton
+                                style={displayInline}
+                                labelStyle={labelStyle}
+                                value={IMG_TYPE.link}
+                                label={L.label_radio_link}
+                            />
+                            <RadioButton
+                                style={displayInline}
+                                labelStyle={labelStyle}
+                                value={IMG_TYPE.upload}
+                                label={L.label_checkbox_Upload}
+                            />
+                        </RadioButtonGroup>
+                        {
+                            imageType == IMG_TYPE.link ? <TextField
+                                ref="dialogImg"
+                                defaultValue={dialogDefaultImg}
+                                fullWidth={true}
+                                floatingLabelText={L.label_input_imgSrc}
+                            /> : imageType == IMG_TYPE.upload ? <ImgUpload
+                                initImgSrc={dialogDefaultImg||DEFAULT_UPLOAD_IMG}
+                                onChange={this.imgUploaded}/> : null
+                        }
+
+                    </div>
+                    {
+                        dialogErrorMsg.length > 0 ?
+                            <div className={style.errorMsg}><span className="icon-info"></span> {dialogErrorMsg}</div>
+                            : null
+                    }
+                </Dialog>
             </div>
         );
     }

@@ -21,10 +21,11 @@ export default handleActions({
     [SEARCH_DELETE]: checkError((state, action)=> {
         // 把ID号转变为index值
         let searchList = state.searchList;
-        state.searchList.forEach((val, index)=> {
-            let id = val.get('id');
-            action.meta[id] && (searchList = searchList.delete(index));
-        });
+        let searchListObj = searchList.toJS();
+        for (let i = searchListObj.length - 1; i >= 0; i--) {
+            let id = searchListObj[i].id;
+            action.meta[id] && (searchList = searchList.delete(i));
+        }
         return {...state, searchList: searchList}
     }),
     [SEARCH_ADD]: checkError((state, action)=>({
