@@ -166,20 +166,6 @@ class Search extends PureComponent {
         this.setState({modifyMode: true, deleteMode: false})
     }
 
-    componentDidUpdate() {
-        let keyword = this.state.keyword;
-        if (keyword.length > 0 && document.getElementsByClassName(style.keyword).length == 0) {
-            const replaceKeyword = (e)=> {
-                e.innerHTML = e.innerHTML.replace(new RegExp(keyword, 'ig'), "<span class=" + style.keyword + ">$&</span>");
-                console.log(e.innerHTML)
-            };
-            map(document.querySelectorAll(`.${style.cardTitle} span`), replaceKeyword);
-            map(document.getElementsByClassName(style.siteTime), replaceKeyword);
-            map(document.getElementsByClassName(style.cardText), replaceKeyword);
-            map(document.getElementsByClassName(style.cardLink), replaceKeyword);
-        }
-    }
-
     componentDidMount() {
         this.props.actions.getSite();
         perfectScroll(this.refs.list);
