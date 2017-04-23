@@ -106,6 +106,7 @@ class Search extends PureComponent {
         this.openModifyMode = this.openModifyMode.bind(this);
         this.onChangeImgType = this.onChangeImgType.bind(this);
         this.imgUploaded = this.imgUploaded.bind(this);
+        this.openDialog = this.openDialog.bind(this);
     }
 
     /***************** SearchBar 开始 *****************/
@@ -162,14 +163,23 @@ class Search extends PureComponent {
     }
 
     switchSearch(search) {
-        if (!this.state.deleteMode) {
-            search.id == this.props.currentSearch.get('id') || this.props.actions.changeCurrentSearch(search);
-        } else {
+        if (this.state.deleteMode) {
             let index = search.id;
             this.setState((state)=> {
                 state.checkObj[index] = !state.checkObj[index];
                 return state;
             })
+        } else if (this.state.modifyMode) {
+            let othersState = {};
+            othersState.dialogDefaultName = search.name;
+            othersState.dialogDefaultLink = search.link;
+            othersState.dialogDefaultHide = search.hide;
+            othersState.dialogDefaultOpen = search.open;
+            othersState.dialogDefaultImg = search.img;
+            othersState.dialogModifyId = search.id;
+            this.setState({dialogOpen: true, ...othersState})
+        } else {
+            search.id == this.props.currentSearch.get('id') || this.props.actions.changeCurrentSearch(search);
         }
     }
 
@@ -226,17 +236,8 @@ class Search extends PureComponent {
 
 
     /***************** Dialog事件 开始 *****************/
-    openDialog(param) {
-        let othersState = {};
-        if (this.state.modifyMode) {
-            othersState.dialogDefaultName = param.name;
-            othersState.dialogDefaultLink = param.link;
-            othersState.dialogDefaultHide = param.hide;
-            othersState.dialogDefaultOpen = param.open;
-            othersState.dialogDefaultImg = param.img;
-            othersState.dialogModifyId = param.id;
-        }
-        this.setState({dialogOpen: true, ...othersState})
+    openDialog() {
+        this.setState({dialogOpen: true, modifyMode: false, deleteMode: false})
     }
 
     closeDialog(confirm) {
@@ -277,7 +278,7 @@ class Search extends PureComponent {
                 }
             }
         } else {
-            this.setState({dialogOpen: false, dialogErrorMsg: ''})
+            this.setState({dialogOpen: false, ...DIALOG_DEFAULT})
         }
     }
 
@@ -388,7 +389,7 @@ class Search extends PureComponent {
                         </IconButton>
                     </div>
                     <IconButton
-                        onClick={this.openDialog.bind(this)}
+                        onClick={this.openDialog}
                         style={btnStyle}>
                         <IconAdd
                             className={style.btn}
@@ -428,7 +429,7 @@ class Search extends PureComponent {
                                 !param.hide || showHide ? (
                                     <li key={index}
                                         className={classnames({[style.active]:param.id==currentSearch.get('id'),[style.hide]:param.hide,[style.pulse]:modifyMode})}
-                                        onClick={!modifyMode?this.switchSearch.bind(this,param):this.openDialog.bind(this,param)}>
+                                        onClick={this.switchSearch.bind(this,param)}>
                                         {
                                             deleteMode ? (
                                                 <div
@@ -439,7 +440,8 @@ class Search extends PureComponent {
                                                 </div>
                                             ) : null
                                         }
-                                        <figure className="hoverZoom" style={{backgroundImage:`url(${param.img})`}}></figure>
+                                        <figure className="hoverZoom"
+                                                style={{backgroundImage:`url(${param.img})`}}></figure>
                                         <span>{param.name}</span>
                                     </li>
                                 ) : null))

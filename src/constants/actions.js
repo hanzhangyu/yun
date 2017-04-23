@@ -29,5 +29,6 @@ export const SITE_GET = 'SITE_GET';
 export const SITE_SEARCH = 'SITE_SEARCH';
 export const SITE_DELETE = 'SITE_DELETE';
 export const SITE_ADD = 'SITE_ADD';
+export const SITE_MODIFY = 'SITE_MODIFY';
 
 

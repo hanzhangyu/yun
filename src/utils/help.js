@@ -61,15 +61,34 @@ export const checkError = (callback)=> {
  * @param fn
  * @returns {*}
  */
-export const insertionSort=(array,fn=(a,b)=>b>a)=>{
-    for (let i=1;i<array.length;i++){
-        let key=array[i];
-        let j=i-1;
-        while(j>=0&&fn(array[j],key)){
-            array[j+1]=array[j];
+export const insertionSort = (array, fn = (a, b)=>b > a)=> {
+    for (let i = 1; i < array.length; i++) {
+        let key = array[i];
+        let j = i - 1;
+        while (j >= 0 && fn(array[j], key)) {
+            array[j + 1] = array[j];
             j--;
         }
-        array[j+1]=key;
+        array[j + 1] = key;
     }
     return array
+};
+
+/**
+ * yyyy-mm-dd这种格式的排序函数
+ * @param a
+ * @param b
+ * @returns {boolean}
+ */
+export const sortByTime = (a, b)=> {
+    let aArray = a.split('-');
+    let bArray = b.split('-');
+    for (let i = 0; i < aArray.length; i++) {
+        let keyA = aArray[i];
+        let keyB = bArray[i];
+        if (keyA != keyB) {
+            return keyA < keyB;
+        }
+    }
+    return false;
 };

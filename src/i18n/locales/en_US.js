@@ -22,6 +22,7 @@ module.exports = {
     tip_form_searchName_error: 'Please enter Search name!',
     tip_form_link_error: 'Please enter link!',
     tip_form_imgSrc_error: 'Please enter image URL or select image!',
+    tip_form_noCrop_error: 'Please select the clipping area!',
 
     tip_action_success: 'Success!',
     tip_action_deleteSuccess: 'Delete Success!',
@@ -37,6 +38,7 @@ module.exports = {
     label_btn_login: 'LOGIN',
     label_btn_signUp: 'SIGN UP',
     label_btn_next: 'NEXT',
+    label_btn_prev: 'PREV',
     label_btn_noAccount: 'Not registered yet?',
     label_btn_forgetPW: 'Forget Password?',
     label_input_email: 'Email:',
@@ -64,6 +66,7 @@ module.exports = {
     label_checkbox_Upload: 'Upload',
     label_radio_random: 'Use random image',
     label_radio_link: 'Use link',
+    label_radio_unchanged: 'Don`t change my figure',
 
     label_action_confirmDelete: 'Confirm Delete?',
     label_action_deleted: 'Deleted!',

@@ -2,10 +2,10 @@
  * Created by Paul on 2017/4/21.
  */
 import { handleActions } from 'redux-actions';
-import {fromJS,List} from 'immutable';
+import {fromJS,List,Map} from 'immutable';
 import {map} from 'lodash';
-import { SITE_GET,SITE_SEARCH,SITE_DELETE } from '../constants/actions';
-import { checkError,insertionSort } from '../utils/help';
+import { SITE_GET,SITE_SEARCH,SITE_DELETE,SITE_ADD,SITE_MODIFY } from '../constants/actions';
+import { checkError,insertionSort,sortByTime } from '../utils/help';
 
 const initialState = {
     siteObj: fromJS({}),
@@ -25,18 +25,7 @@ const adaptData = (state, action)=> {
         }
     });
     // 时间数组排序
-    insertionSort(timeArray, (a, b)=> {
-        let aArray = a.split('-');
-        let bArray = b.split('-');
-        for (let i = 0; i < aArray.length; i++) {
-            let keyA = aArray[i];
-            let keyB = bArray[i];
-            if (keyA != keyB) {
-                return keyA < keyB;
-            }
-        }
-        return false;
-    });
+    insertionSort(timeArray, sortByTime);
     return {...state, siteObj: fromJS(siteObj), timeArray: List(timeArray)}
 };
 
@@ -45,6 +34,7 @@ export default handleActions({
     [SITE_SEARCH]: checkError(adaptData),
     [SITE_DELETE]: checkError((state, action)=> {
         let siteObj = state.siteObj;
+        // 根据服务器返回的特定数组进行删除
         map(action.payload, (val, date)=> {
             let items = siteObj.get(date).toJS();
             for (let i = items.length - 1; i >= 0; i--) {
@@ -52,6 +42,27 @@ export default handleActions({
                     return items.delete(i)
                 }))
             }
+        });
+        return {...state, siteObj: siteObj}
+    }),
+    [SITE_ADD]: checkError((state, action)=> {
+        let siteObj = state.siteObj;
+        let data = action.payload;
+        let date = data.date;
+        // 检查是否已有这个日期
+        siteObj = siteObj.get(date) ? siteObj.update(date, items=> {
+            return items.unshift(Map(data))
+        }) : siteObj.set(date, fromJS([data]));
+        return {...state, siteObj: siteObj}
+    }),
+    [SITE_MODIFY]: checkError((state, action)=> {
+        let site = action.payload;
+        let siteObj = state.siteObj;
+        let items = siteObj.get(site.date);
+        let index = items.findIndex(val=>val.get('id') == site.id);
+        // 在reducer的算法中会进行对比，所以直接替换就可以了
+        siteObj = siteObj.updateIn([site.date, index], ()=> {
+            return Map(site)
         });
         return {...state, siteObj: siteObj}
     })

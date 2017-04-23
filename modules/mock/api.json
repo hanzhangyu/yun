@@ -325,18 +325,48 @@
     },
     {
       "url": "/addSite",
-      "desc": "删除",
+      "desc": "添加",
       "method": "POST",
       "delay": 200,
       "mock": true,
-      "req": {},
+      "req": {
+        "img": "/images/user_boy_default.jpg",
+        "title": null,
+        "link": "123",
+        "summary": null,
+        "dialogImgCrop": {
+          "x": 0,
+          "y": 0,
+          "width": 200,
+          "height": 150
+        }
+      },
       "res": {
         "code": 200,
-        "msg": "删除成功",
+        "msg": "添加成功",
         "data": {
           "id|+1": 1000,
           "img": "images/random01.jpg",
-          "title": "@这里是title",
+          "title": "这里是title",
+          "summary|1": "这是里summary",
+          "link": "www.paulhan.cn",
+          "date|1": "2017-12-27"
+        }
+      }
+    },
+    {
+      "url": "/modifySite",
+      "desc": "修改",
+      "method": "POST",
+      "delay": 200,
+      "mock": true,
+      "res": {
+        "code": 200,
+        "msg": "修改成功",
+        "data": {
+          "id|+1": 1000,
+          "img": "images/random01.jpg",
+          "title": "这里是title",
           "summary|1": "这是里summary",
           "link": "www.paulhan.cn",
           "date|1": "2017-12-27"

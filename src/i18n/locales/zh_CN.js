@@ -22,6 +22,7 @@ module.exports = {
     tip_form_searchName_error: '请输入搜索名！',
     tip_form_link_error: '请输入链接！',
     tip_form_imgSrc_error: '请输入或选择图片！',
+    tip_form_noCrop_error: '请选择裁剪的区域！',
 
     tip_action_success: '成功',
     tip_action_deleteSuccess: '删除成功',
@@ -37,6 +38,7 @@ module.exports = {
     label_btn_login: '登录',
     label_btn_signUp: '注册',
     label_btn_next:'下一步',
+    label_btn_prev: '上一步',
     label_btn_noAccount: '还没注册？',
     label_btn_forgetPW: '忘记密码？',
     label_input_email: '请输入邮箱：',
@@ -64,6 +66,7 @@ module.exports = {
     label_checkbox_Upload: '本地上传',
     label_radio_random:'使用系统随机分配',
     label_radio_link:'使用外链',
+    label_radio_unchanged: '不改变图片',
 
     label_action_confirmDelete: '确认删除？',
     label_action_deleted: '已删除！',

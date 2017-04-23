@@ -18,6 +18,7 @@ import snackActions from '../../actions/snack';
 import PureComponent from '../../components/PureComponent';
 import ImgUpload from '../../components/ImgUpload';
 
+import ReactCrop from 'react-image-crop';
 import ReactTooltip from 'react-tooltip'
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
@@ -68,6 +69,10 @@ const displayInline = {
     textAlign: 'left'
 };
 
+const displayNone = {
+    display: 'none'
+};
+
 const labelStyle = {
     width: 'auto'
 };
@@ -75,8 +80,11 @@ const labelStyle = {
 const IMG_TYPE = {
     random: 0,
     link: 1,
-    upload: 2
+    upload: 2,
+    unchanged: 3
 };
+
+const REACT_CROP = {width: 250, aspect: 250 / 188};
 
 const imgOnLoad = e=> {
     e.currentTarget.classList.add(style.loaded);
@@ -92,7 +100,7 @@ const imgOnError = e=> {
     });
 };
 
-const getJsxByTime = (siteObj, timeArray, deleteMode, checkObj, onClick)=> {
+const getJsxByTime = (siteObj, timeArray, deleteMode, modifyMode, checkObj, onClick)=> {
     let result = [];
     timeArray.forEach(time=> {
         let list = siteObj.get(time);
@@ -116,7 +124,7 @@ const getJsxByTime = (siteObj, timeArray, deleteMode, checkObj, onClick)=> {
                             </div>
                         ) : null
                     }
-                    <Card>
+                    <Card className={classnames({[style.modifyMode]:modifyMode})}>
                         <CardMedia
                             title={title}
                             className='overflow'
@@ -141,13 +149,17 @@ const getJsxByTime = (siteObj, timeArray, deleteMode, checkObj, onClick)=> {
 };
 
 const DIALOG_DEFAULT = {
+    dialogNext: false,
     dialogImg: '',
     dialogDefaultTitle: '',
     dialogDefaultSummary: "",
     dialogDefaultLink: '',
     dialogDefaultImg: '',
     dialogErrorMsg: '',
-    dialogModifyId: null
+    imageType: IMG_TYPE.random,
+    dialogImgCrop: null,
+    dialogModifyId: null,
+    imgCrop: {},
 };
 
 class Search extends PureComponent {
@@ -158,7 +170,6 @@ class Search extends PureComponent {
             keyword: '',
             dialogOpen: false,
             checkObj: {},
-            imageType: IMG_TYPE.random,
             modifyMode: false,
             deleteMode: false,
             ...DIALOG_DEFAULT
@@ -166,10 +177,13 @@ class Search extends PureComponent {
         };
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onClick = this.onClick.bind(this);
+        this.openDialog = this.openDialog.bind(this);
         this.openDeleteMode = this.openDeleteMode.bind(this);
         this.openModifyMode = this.openModifyMode.bind(this);
         this.onChangeImgType = this.onChangeImgType.bind(this);
         this.imgUploaded = this.imgUploaded.bind(this);
+        this.onComplete = this.onComplete.bind(this);
+        this.onImageLoaded = this.onImageLoaded.bind(this);
     }
 
     fixHeight() {
@@ -195,7 +209,14 @@ class Search extends PureComponent {
                 return state;
             })
         } else if (this.state.modifyMode) {
-
+            let othersState = {};
+            othersState.dialogDefaultLink = site.get('link');
+            othersState.dialogDefaultTitle = site.get('title');
+            othersState.dialogDefaultSummary = site.get('summary');
+            othersState.dialogDefaultImg = site.get('img');
+            othersState.dialogModifyId = site.get('id');
+            othersState.imageType = IMG_TYPE.unchanged;
+            this.setState({dialogOpen: true, ...othersState})
         } else {
             console.log(site.get('link'));
             //window.open(site.get('link'));
@@ -229,56 +250,77 @@ class Search extends PureComponent {
         }) : this.setState({deleteMode: false, modifyMode: false});
     }
 
-    openDialog(param) {
-        let othersState = {};
-        if (this.state.modifyMode) {
-            othersState.dialogDefaultName = param.name;
-            othersState.dialogDefaultLink = param.link;
-            othersState.dialogDefaultHide = param.hide;
-            othersState.dialogDefaultOpen = param.open;
-            othersState.dialogDefaultImg = param.img;
-            othersState.dialogModifyId = param.id;
-        }
-        this.setState({dialogOpen: true, ...othersState})
+    openDialog() {
+        this.setState({dialogOpen: true, modifyMode: false, deleteMode: false})
     }
 
     closeDialog(confirm) {
+        let {dialogImg,dialogNext,modifyMode,imageType,dialogImgCrop,dialogDefaultImg}=this.state;
         if (confirm) {
-            let {dialogInputLink,dialogInputTitle ,dialogInputSummary ,dialogImg,}=this.refs;
-            let link = dialogInputLink.getValue();
-            let title = dialogInputTitle.getValue() || null;
-            let summary = dialogInputSummary.getValue() || null;
-            let imageType = this.state.imageType;
-            let img = imageType == IMG_TYPE.upload ? this.state.dialogImg : imageType == IMG_TYPE.link ? dialogImg.getValue() : null;
+            let {dialogInputLink,dialogInputTitle ,dialogInputSummary ,dialogInputImg,}=this.refs;
+            let link, title, summary, img;
+            let randomImgType = imageType == IMG_TYPE.random;
+            let unchangedImgType = imageType == IMG_TYPE.unchanged;
+            // 数据源
+            if (!dialogNext) {
+                link = dialogInputLink.getValue();
+                title = dialogInputTitle.getValue() || null;
+                summary = dialogInputSummary.getValue() || null;
+                img = randomImgType ? null
+                    : imageType == IMG_TYPE.link ? dialogInputImg.getValue()
+                    : imageType == IMG_TYPE.upload ? dialogImg
+                    : dialogDefaultImg;
+            } else {
+                link = this.state.dialogDefaultLink;
+                title = this.state.dialogDefaultTitle;
+                summary = this.state.dialogDefaultSummary;
+                img = dialogImg;
+            }
             // 输入验证
             if (link.length == 0) {
                 this.setState({dialogErrorMsg: L.tip_form_link_error})
-            } else if (imageType != IMG_TYPE.random && img.length == 0) {
+            } else if (!randomImgType && img.length == 0) {
                 this.setState({dialogErrorMsg: L.tip_form_imgSrc_error})
+            } else if (dialogNext && dialogImgCrop === null) {
+                this.setState({dialogErrorMsg: L.tip_form_noCrop_error})
             } else {
                 this.setState({dialogErrorMsg: ''});
-                // 同一提交函数
-                let callback = (action, msgSuccess, msgFailed, idObj = {})=> {
-                    this.props.actions[action]({img, name, link, hide, open, ...idObj}).then((data)=> {
-                        if (!data.error) {
-                            this.props.actions.snackChangeMsg(msgSuccess);
-                            this.setState({dialogOpen: false, ...DIALOG_DEFAULT})
-                        } else {
-                            this.props.actions.snackChangeMsg(msgFailed);
-                        }
-                    });
-                    console.info({img, name, link, hide, open, ...idObj})
-                };
+                if (randomImgType || unchangedImgType || dialogNext) {//递交
+                    // 同一提交函数
+                    let callback = (action, msgSuccess, msgFailed, idObj = {})=> {
+                        this.props.actions[action]({img, title, link, summary, dialogImgCrop, ...idObj}).then((data)=> {
+                            if (!data.error) {
+                                this.props.actions.snackChangeMsg(msgSuccess);
+                                this.setState({dialogOpen: false, ...DIALOG_DEFAULT})
+                            } else {
+                                this.props.actions.snackChangeMsg(msgFailed);
+                            }
+                        });
+                        console.info({img, title, link, summary, ...idObj})
+                    };
 
-                // 区分修改还是添加
-                if (this.state.modifyMode) {
-                    //callback('modifySearch', L.tip_action_modifySuccess, L.tip_action_modifyFailed, {id: this.state.dialogModifyId})
-                } else {
-                    callback('snackChangeMsg', L.tip_action_addSuccess, L.tip_action_addFailed)
+                    // 区分修改还是添加
+                    if (modifyMode) {
+                        callback('modifySite', L.tip_action_modifySuccess, L.tip_action_modifyFailed, {id: this.state.dialogModifyId})
+                    } else {
+                        callback('addSite', L.tip_action_addSuccess, L.tip_action_addFailed)
+                    }
+                } else {// 下一步，剪切图片
+                    let othersState = {};
+                    othersState.dialogDefaultLink = link;
+                    othersState.dialogDefaultTitle = title;
+                    othersState.dialogDefaultSummary = summary;
+                    othersState.dialogDefaultImg = img;
+                    this.setState({dialogNext: true, dialogImg: img, ...othersState})
                 }
             }
         } else {
-            this.setState({dialogOpen: false, dialogErrorMsg: ''})
+            // 返回上一步/关闭对话框
+            if (dialogNext) {
+                this.setState({dialogNext: false})
+            } else {
+                this.setState({dialogOpen: false, ...DIALOG_DEFAULT})
+            }
         }
     }
 
@@ -286,6 +328,14 @@ class Search extends PureComponent {
         if (!err) {
             this.setState({dialogImg: src})
         }
+    }
+
+    onComplete(crop, pixelCrop) {
+        this.setState({dialogImgCrop: pixelCrop, imgCrop: crop});
+    }
+
+    onImageLoaded(crop, image, pixelCrop) {
+        this.setState({dialogImgCrop: pixelCrop});
     }
 
     onChangeImgType(e, value) {
@@ -308,32 +358,36 @@ class Search extends PureComponent {
     }
 
     componentDidMount() {
-        this.props.actions.getSite();
-        perfectScroll(this.refs.list);
-        this.fixHeight();
-        let resize = ()=> {
-            // 切换项目之后解除绑定
-            if (location.pathname.split('/')[1] == '') {
-                this.fixHeight();
-                perfectScrollUpdate(this.refs.list);
-            } else {
-                window.removeEventListener('resize', resize);
-            }
+        let callback = ()=> {
+            perfectScroll(this.refs.list);
+            this.fixHeight();
+            let resize = ()=> {
+                // 切换项目之后解除绑定
+                if (location.pathname.split('/')[1] == '') {
+                    this.fixHeight();
+                    perfectScrollUpdate(this.refs.list);
+                } else {
+                    window.removeEventListener('resize', resize);
+                }
+            };
+            window.addEventListener('resize', resize);
         };
-        window.addEventListener('resize', resize);
+        // 检查是否有缓存
+        this.props.timeArray.size == 0 ? this.props.actions.getSite().then(callback) : callback();
     }
 
     render() {
+        console.log('renderSite')
         const {siteObj,timeArray}=this.props;
         const {listHeight,deleteMode,checkObj,modifyMode,dialogOpen,dialogDefaultTitle, dialogDefaultSummary,dialogDefaultLink ,
-            dialogDefaultImg ,dialogErrorMsg ,imageType}=this.state;
+            dialogDefaultImg ,dialogErrorMsg ,imageType,dialogNext,dialogImg,imgCrop}=this.state;
         const actions = [
             <FlatButton
-                label={L.label_btn_cancel}
+                label={!dialogNext?L.label_btn_cancel:L.label_btn_prev}
                 onTouchTap={this.closeDialog.bind(this,false)}
             />,
             <FlatButton
-                label={imageType==IMG_TYPE.random?L.label_btn_confirm:L.label_btn_next}
+                label={(imageType==IMG_TYPE.random||imageType==IMG_TYPE.unchanged||dialogNext)?L.label_btn_confirm:L.label_btn_next}
                 primary={true}
                 onTouchTap={this.closeDialog.bind(this,true)}
             />
@@ -373,7 +427,7 @@ class Search extends PureComponent {
                         </IconButton>
                     </div>
                     <IconButton
-                        onClick={this.openDialog.bind(this)}
+                        onClick={this.openDialog}
                         style={btnStyle}>
                         <IconAdd
                             className={style.btn}
@@ -399,7 +453,7 @@ class Search extends PureComponent {
                 </section>
                 <section className={style.siteListWrap} style={{height:listHeight}} ref="list">
                     {
-                        getJsxByTime(siteObj, timeArray, deleteMode, checkObj, this.onClick)
+                        getJsxByTime(siteObj, timeArray, deleteMode, modifyMode, checkObj, this.onClick)
                     }
                 </section>
                 {/* 对话框 */}
@@ -407,71 +461,83 @@ class Search extends PureComponent {
                     actions={actions}
                     modal={false}
                     open={dialogOpen}
+                    contentClassName={style.content}
                     onRequestClose={this.closeDialog.bind(this,false)}
                 >
                     <ReactTooltip effect="solid"/>
-                    <TextField
-                        floatingLabelText={L.label_input_link}
-                        fullWidth={true}
-                        ref="dialogInputLink"
-                        defaultValue={dialogDefaultLink}
-                    />
-                    <TextField
-                        floatingLabelText={L.label_input_siteTitle}
-                        fullWidth={true}
-                        ref="dialogInputTitle"
-                        data-tip={L.label_input_siteAutoTip}
-                        defaultValue={dialogDefaultTitle}
-                    />
-                    <TextField
-                        floatingLabelText={L.label_input_siteSummary}
-                        fullWidth={true}
-                        ref="dialogInputSummary"
-                        data-tip={L.label_input_siteAutoTip}
-                        multiLine={true}
-                        rows={2}
-                        rowsMax={4}
-                        defaultValue={dialogDefaultSummary}
-                    />
-                    <div className='pos_re'>
-                        <RadioButtonGroup name="shipSpeed"
-                                          defaultSelected={imageType}
-                                          onChange={this.onChangeImgType}
-                                          className={style.radioGroup}>
-                            <RadioButton
-                                style={displayInline}
-                                labelStyle={labelStyle}
-                                value={IMG_TYPE.random}
-                                label={L.label_radio_random}
-                            />
-                            <RadioButton
-                                style={displayInline}
-                                labelStyle={labelStyle}
-                                value={IMG_TYPE.link}
-                                label={L.label_radio_link}
-                            />
-                            <RadioButton
-                                style={displayInline}
-                                labelStyle={labelStyle}
-                                value={IMG_TYPE.upload}
-                                label={L.label_checkbox_Upload}
-                            />
-                        </RadioButtonGroup>
-                        {
-                            imageType == IMG_TYPE.link ? <TextField
-                                ref="dialogImg"
-                                defaultValue={dialogDefaultImg}
+                    {
+                        !dialogNext ? <div>
+                            <TextField
+                                floatingLabelText={L.label_input_link}
                                 fullWidth={true}
-                                floatingLabelText={L.label_input_imgSrc}
-                            /> : imageType == IMG_TYPE.upload ? <ImgUpload
-                                initImgSrc={dialogDefaultImg||DEFAULT_UPLOAD_IMG}
-                                onChange={this.imgUploaded}/> : null
-                        }
-
-                    </div>
+                                ref="dialogInputLink"
+                                defaultValue={dialogDefaultLink}
+                            />
+                            <TextField
+                                floatingLabelText={L.label_input_siteTitle}
+                                fullWidth={true}
+                                ref="dialogInputTitle"
+                                data-tip={L.label_input_siteAutoTip}
+                                defaultValue={dialogDefaultTitle}
+                            />
+                            <TextField
+                                floatingLabelText={L.label_input_siteSummary}
+                                fullWidth={true}
+                                ref="dialogInputSummary"
+                                data-tip={L.label_input_siteAutoTip}
+                                multiLine={true}
+                                rows={2}
+                                rowsMax={4}
+                                defaultValue={dialogDefaultSummary}
+                            />
+                            <RadioButtonGroup name="imgType"
+                                              defaultSelected={imageType}
+                                              onChange={this.onChangeImgType}
+                                              className={style.radioGroup}>
+                                <RadioButton
+                                    style={modifyMode ? displayInline:displayNone}
+                                    labelStyle={labelStyle}
+                                    value={IMG_TYPE.unchanged}
+                                    label={L.label_radio_unchanged}
+                                />
+                                <RadioButton
+                                    style={displayInline}
+                                    labelStyle={labelStyle}
+                                    value={IMG_TYPE.random}
+                                    label={L.label_radio_random}
+                                />
+                                <RadioButton
+                                    style={displayInline}
+                                    labelStyle={labelStyle}
+                                    value={IMG_TYPE.link}
+                                    label={L.label_radio_link}
+                                />
+                                <RadioButton
+                                    style={displayInline}
+                                    labelStyle={labelStyle}
+                                    value={IMG_TYPE.upload}
+                                    label={L.label_checkbox_Upload}
+                                />
+                            </RadioButtonGroup>
+                            {
+                                imageType == IMG_TYPE.link ? <TextField
+                                    ref="dialogInputImg"
+                                    defaultValue={dialogDefaultImg}
+                                    fullWidth={true}
+                                    floatingLabelText={L.label_input_imgSrc}
+                                /> : imageType == IMG_TYPE.upload ? <ImgUpload
+                                    initImgSrc={dialogDefaultImg||DEFAULT_UPLOAD_IMG}
+                                    onChange={this.imgUploaded}/> : null
+                            }
+                        </div> : <div className={style.ReactCrop}><ReactCrop onComplete={this.onComplete}
+                                                                             onImageLoaded={this.onImageLoaded}
+                                                                             crop={{...REACT_CROP,...imgCrop}}
+                                                                             src={dialogImg}/></div>
+                    }
                     {
                         dialogErrorMsg.length > 0 ?
-                            <div className={style.errorMsg}><span className="icon-info"></span> {dialogErrorMsg}</div>
+                            <div className={style.errorMsg}><span className="icon-info"></span> {dialogErrorMsg}
+                            </div>
                             : null
                     }
                 </Dialog>
@@ -483,7 +549,8 @@ class Search extends PureComponent {
 // connect action to props
 const mapStateToProps = (state) => ({...state.site});
 // 使用对象扩展运算,绑定多个 action
-const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...siteActions, ...snackActions}, dispatch)});
+const mapDispatchToProps = (dispatch) =>
+    ({actions: bindActionCreators({...siteActions, ...snackActions}, dispatch)});
 
 export default connect(
     mapStateToProps,

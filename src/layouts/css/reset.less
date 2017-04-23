@@ -1,6 +1,7 @@
 // 公共资源引入，以及reset
 @import '../../../node_modules/sweetalert/dist/sweetalert.css';
 @import (less) '~perfect-scrollbar/dist/css/perfect-scrollbar.css';
+@import (less) '~react-image-crop/dist/ReactCrop.css';
 @import './common.less';
 @import './animate.css';
 
@@ -116,5 +117,14 @@ figure {
   100% {
     opacity: 1;
     transform: scale3d(1, 1, 1)
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
   }
 }

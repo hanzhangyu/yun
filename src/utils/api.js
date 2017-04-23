@@ -121,4 +121,5 @@ export default {
     searchSite: params=> request(getApi('/searchSite'), params, METHOD.GET),
     deleteSite: params=> request(getApi('/deleteSite'), params, METHOD.POST, true),
     addSite: params=> request(getApi('/addSite'), params, METHOD.POST, true),
+    modifySite: params=> request(getApi('/modifySite'), params, METHOD.POST, true),
 }
