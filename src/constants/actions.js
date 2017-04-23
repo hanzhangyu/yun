@@ -30,5 +30,9 @@ export const SITE_SEARCH = 'SITE_SEARCH';
 export const SITE_DELETE = 'SITE_DELETE';
 export const SITE_ADD = 'SITE_ADD';
 export const SITE_MODIFY = 'SITE_MODIFY';
+export const NOTE_GET = 'NOTE_GET';
+export const NOTE_MODIFY = 'NOTE_MODIFY';
+export const NOTE_DELETE = 'NOTE_DELETE';
+export const NOTE_ADD = 'NOTE_ADD';
 
 

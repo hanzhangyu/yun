@@ -13,10 +13,10 @@ const initialState = {
 };
 
 export default handleActions({
-    [SEARCH_GET]: (state, action)=> {
+    [SEARCH_GET]: checkError((state, action)=> {
         let {currentSearch,searchList}=action.payload;
         return {...state, currentSearch: Map(currentSearch), searchList: fromJS(searchList)}
-    },
+    }),
     [SEARCH_CHANGE_CURRENT]: (state, action) => ({...state, currentSearch: Map(action.meta)}),
     [SEARCH_DELETE]: checkError((state, action)=> {
         // 把ID号转变为index值
@@ -33,7 +33,7 @@ export default handleActions({
         searchList: state.searchList.push(Map({...action.meta, id: action.payload}))
     })),
     [SEARCH_MODIFY]: checkError((state, action)=> {
-        let index = state.searchList.findIndex(val=>val.get('id') == action.meta.id);
-        return {...state, searchList: state.searchList.update(index, val=>Map(action.meta))}
+        let index = action.mate;
+        return {...state, searchList: state.searchList.update(index, val=>Map(action.payload))}
     }),
 }, initialState);

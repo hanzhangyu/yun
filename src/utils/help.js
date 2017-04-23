@@ -2,6 +2,8 @@
  * Created by Paul on 2017/3/3.
  */
 import Ps from 'perfect-scrollbar';
+import {ROUTER} from '../constants/const'
+import {map} from 'lodash'
 
 export const clearString = (str, clearStr, isG)=> str.toString().replace(new RegExp(clearStr, isG ? 'g' : ''), '');
 
@@ -91,4 +93,50 @@ export const sortByTime = (a, b)=> {
         }
     }
     return false;
+};
+
+/**
+ * 判断 是否是浏览器导航按钮触发的，注意此处不用箭头函数否则就使用继承
+ */
+export const isCurrentPage = function () {
+    const { actions,currentPage } = this.props;
+    /*
+     location = {
+     pathname, // 当前路径，即 Link 中的 to 属性
+     search, // search
+     hash, // hash
+     state, // state 对象
+     action, // location 类型，在点击 Link 时为 PUSH，浏览器前进后退时为 POP，调用 replaceState 方法时为 REPLACE
+     key, // 用于操作 sessionStorage 存取 state 对象
+     };
+     */
+    // 检查是否非按钮导航
+    const locationPage = window.location.pathname.split('/')[1];
+    map(ROUTER, (param, code)=> {
+        (locationPage == param) && code != currentPage && actions.switchCurrentPage(code);
+    });
+};
+
+/**
+ * 与上类似
+ */
+export const pageInit = function (hasCache, action, shouldFix = true, callback = ()=> {
+}) {
+    let _callback = ()=> {
+        perfectScroll(this.refs.list);
+        shouldFix && this.fixHeight();
+        let resize = ()=> {
+            // 切换项目之后解除绑定
+            if (location.pathname.split('/')[1] == '') {
+                shouldFix && this.fixHeight();
+                perfectScrollUpdate(this.refs.list);
+            } else {
+                window.removeEventListener('resize', resize);
+            }
+        };
+        window.addEventListener('resize', resize);
+        callback();
+    };
+    // 检查是否有缓存
+    hasCache ? this.props.actions[action]().then(_callback) : _callback();
 };

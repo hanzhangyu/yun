@@ -16,6 +16,7 @@ import style from './style.less';
 import rootActions from '../../actions/root';
 import pageLoadingActions from '../../actions/pageLoading';
 import snackActions from '../../actions/snack';
+import userActions from '../../actions/user';
 import SearchPage from '../Search';
 import PureComponent from '../../components/PureComponent';
 import PageLoading from '../../components/PageLoading';
@@ -97,22 +98,7 @@ class App extends PureComponent {
     }
 
     componentDidMount() {
-        const { actions,location,currentPage } = this.props;
-        /*
-         location = {
-         pathname, // 当前路径，即 Link 中的 to 属性
-         search, // search
-         hash, // hash
-         state, // state 对象
-         action, // location 类型，在点击 Link 时为 PUSH，浏览器前进后退时为 POP，调用 replaceState 方法时为 REPLACE
-         key, // 用于操作 sessionStorage 存取 state 对象
-         };
-         */
-        // 检查是否非按钮导航
-        const locationPage = location.pathname.split('/')[1];
-        map(NAV_CONFIG, (param, code)=> {
-            (locationPage == param.path) && code != currentPage && actions.switchCurrentPage(code);
-        });
+        const actions = this.props.actions;
         actions.getCurrentUser().then(()=> {
             actions.hidePageLoading();
         });
@@ -126,6 +112,8 @@ class App extends PureComponent {
         console.log('renderApp')
         const { isDrawerOpened,isMobile }=this.state;
         const { children,pageLoading,currentPage,snackMsg,actions,systemConfigure } = this.props;
+        // FIXME 临时性的写法
+        const hasBgColor = location.pathname.split('/')[1] == NAV_CONFIG.note.path;
 
         const NavDarwer = (props)=>(
             <IconButton onClick={this.toggleNav.bind(this)}>
@@ -135,8 +123,10 @@ class App extends PureComponent {
         return (
             <MuiThemeProvider>
                 <div>
-                    <img src={systemConfigure.get('bgSrc')}
-                         className={classnames(style.mainBg,{[style.mobile]:isMobile})} alt=""/>
+                    {
+                        hasBgColor || <img src={systemConfigure.get('bgSrc')}
+                                           className={classnames(style.mainBg,{[style.mobile]:isMobile})} alt=""/>
+                    }
                     {pageLoading && <PageLoading />}
                     <Drawer
                         className={style.drawer}
@@ -150,7 +140,7 @@ class App extends PureComponent {
                         }
                     </Drawer>
                     <AppBar
-                        className={style.appBar}
+                        className={classnames(style.appBar,{[style.bgColor]:hasBgColor})}
                         title="Yun"
                         iconElementLeft={<NavDarwer />}
                         iconElementRight={<User />}
@@ -173,13 +163,12 @@ class App extends PureComponent {
 
 // connect action to props
 const mapStateToProps = (state) =>({
-    currentPage: state.root.currentPage,
-    systemConfigure: state.root.systemConfigure,
+    ...state.root,
     ...state.pageLoading,
     ...state.snack
 });
 // 使用对象扩展运算,绑定多个 action
-const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...rootActions, ...pageLoadingActions, ...snackActions}, dispatch)});
+const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...rootActions, ...pageLoadingActions, ...snackActions, ...userActions}, dispatch)});
 
 export default connect(
     mapStateToProps,

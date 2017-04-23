@@ -23,6 +23,8 @@ module.exports = {
     tip_form_link_error: '请输入链接！',
     tip_form_imgSrc_error: '请输入或选择图片！',
     tip_form_noCrop_error: '请选择裁剪的区域！',
+    tip_form_titleEmpty_error: '标题不能为空！',
+    //tip_form_bodyEmpty_error: '正文不能为空！',
 
     tip_action_success: '成功',
     tip_action_deleteSuccess: '删除成功',
@@ -32,6 +34,8 @@ module.exports = {
     tip_action_modify: '请选择要修改的项！',
     tip_action_modifySuccess: '修改成功',
     tip_action_modifyFailed: '修改失败，请稍后再试！',
+    tip_action_copySuccess: '复制成功',
+    tip_action_copyFailed: '复制失败，请手动复制！',
 
     label_btn_confirm: '确认',
     label_btn_cancel: '算了',
@@ -41,6 +45,12 @@ module.exports = {
     label_btn_prev: '上一步',
     label_btn_noAccount: '还没注册？',
     label_btn_forgetPW: '忘记密码？',
+    label_btn_cancelLow: '取消',
+    label_btn_addNote: '新建笔记',
+    label_btn_editorNote: '编辑',
+    label_btn_saveNote: '保存',
+    label_btn_downloadNote: '下载',
+    label_btn_copyNote: '复制全文',
     label_input_email: '请输入邮箱：',
     label_input_pw: '请输入密码：',
     label_input_newPW: '请输入新密码：',
@@ -71,7 +81,7 @@ module.exports = {
     label_action_confirmDelete: '确认删除？',
     label_action_deleted: '已删除！',
 
-    title__message: '提示',
+    title_message: '提示',
     title_imgUpload: '请点击图片选择您要上传的图片',
 
 
@@ -85,6 +95,7 @@ module.exports = {
     label_tooltip_modify: '修改',
     label_tooltip_showHide: '显示隐藏项',
     label_tooltip_hideHide: '不显示隐藏项',
+    label_tooltip_seeAllNote: '点击查看完整文本',
 
 
 };

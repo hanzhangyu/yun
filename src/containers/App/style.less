@@ -26,10 +26,16 @@
     color: @bgColorStrong;
     line-height: 64px !important;
   }
+  &.bgColor {
+    background: @bgColorStrong;
+    & > h1 {
+      color: @white !important;
+    }
+  }
 }
 
 .drawer {
-  & .drawerPage {
+  .drawerPage {
     font-family: @defaultFontFamilyStrong;
     user-select: none;
     &.active {

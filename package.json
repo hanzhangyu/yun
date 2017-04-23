@@ -54,6 +54,7 @@
     "body-parser": "~1.16.0",
     "classnames": "^2.1.2",
     "cookie-parser": "~1.4.3",
+    "copy-to-clipboard": "^3.0.6",
     "debug": "~2.6.0",
     "ejs": "~2.5.5",
     "es6-promise": "^3.1.2",

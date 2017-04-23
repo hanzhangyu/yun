@@ -6,12 +6,13 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import classnames from 'classnames';
-import { KEYBOARD,DEFAULT_UPLOAD_IMG,ERROR_IMG } from '../../constants/const';
-import { perfectScroll,perfectScrollUpdate } from '../../utils/help';
+import { KEYBOARD,DEFAULT_UPLOAD_IMG,ERROR_IMG,LOADING_IMG } from '../../constants/const';
+import { perfectScroll,perfectScrollUpdate,isCurrentPage,pageInit } from '../../utils/help';
 import {map} from 'lodash';
 
 import style from './style.less';
 
+import rootActions from '../../actions/root';
 import siteActions from '../../actions/site';
 import snackActions from '../../actions/snack';
 
@@ -33,6 +34,7 @@ import IconModify from 'material-ui/svg-icons/action/build';
 import IconConfirm from 'material-ui/svg-icons/action/done';
 import IconCancel from 'material-ui/svg-icons/av/not-interested';
 
+import '../../layouts/images/loading.gif'
 
 // 国际化
 import { getAllLocales, getLocale, setLocale} from '../../i18n';
@@ -87,16 +89,15 @@ const IMG_TYPE = {
 const REACT_CROP = {width: 250, aspect: 250 / 188};
 
 const imgOnLoad = e=> {
-    e.currentTarget.classList.add(style.loaded);
+    e.target.classList.add(style.loaded);
 };
 
 const imgOnError = e=> {
     let dom = e.target;
-    let parentDom = e.currentTarget;
     dom.src = ERROR_IMG;
     // 不管错不错误直接显示
     dom.addEventListener('load error', ()=> {
-        parentDom.classList.add(style.loaded);
+        dom.classList.add(style.loaded);
     });
 };
 
@@ -112,9 +113,7 @@ const getJsxByTime = (siteObj, timeArray, deleteMode, modifyMode, checkObj, onCl
             return (
                 <div className={style.card}
                      key={time.toString()+index}
-                     onClick={()=>{onClick(val)}}
-                     onError={imgOnError}
-                     onLoad={imgOnLoad}>
+                     onClick={()=>{onClick(val)}}>
                     {
                         deleteMode ? (
                             <div
@@ -130,7 +129,11 @@ const getJsxByTime = (siteObj, timeArray, deleteMode, modifyMode, checkObj, onCl
                             className='overflow'
                             overlay={<CardTitle className={style.cardTitle} title={title}/>}
                         >
-                            <img src={val.get('img')}/>
+                            <img className={style.img}
+                                 onError={imgOnError}
+                                 onLoad={imgOnLoad}
+                                 src={val.get('img')}/>
+                            <img className={style.loadingImg} src={LOADING_IMG}/>
                         </CardMedia>
                         <CardText className={style.cardConent}>
                             <div className={style.cardText} title={summary}>
@@ -358,22 +361,8 @@ class Search extends PureComponent {
     }
 
     componentDidMount() {
-        let callback = ()=> {
-            perfectScroll(this.refs.list);
-            this.fixHeight();
-            let resize = ()=> {
-                // 切换项目之后解除绑定
-                if (location.pathname.split('/')[1] == '') {
-                    this.fixHeight();
-                    perfectScrollUpdate(this.refs.list);
-                } else {
-                    window.removeEventListener('resize', resize);
-                }
-            };
-            window.addEventListener('resize', resize);
-        };
-        // 检查是否有缓存
-        this.props.timeArray.size == 0 ? this.props.actions.getSite().then(callback) : callback();
+        isCurrentPage.call(this);
+        pageInit.call(this, this.props.timeArray.size == 0, 'getSite');
     }
 
     render() {
@@ -547,10 +536,10 @@ class Search extends PureComponent {
 }
 
 // connect action to props
-const mapStateToProps = (state) => ({...state.site});
+const mapStateToProps = (state) => ({...state.root, ...state.site});
 // 使用对象扩展运算,绑定多个 action
 const mapDispatchToProps = (dispatch) =>
-    ({actions: bindActionCreators({...siteActions, ...snackActions}, dispatch)});
+    ({actions: bindActionCreators({...rootActions, ...siteActions, ...snackActions}, dispatch)});
 
 export default connect(
     mapStateToProps,

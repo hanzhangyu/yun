@@ -23,6 +23,8 @@ module.exports = {
     tip_form_link_error: 'Please enter link!',
     tip_form_imgSrc_error: 'Please enter image URL or select image!',
     tip_form_noCrop_error: 'Please select the clipping area!',
+    tip_form_titleEmpty_error: 'title could`nt be none!',
+    //tip_form_bodyEmpty_error: 'content could`nt be none!',
 
     tip_action_success: 'Success!',
     tip_action_deleteSuccess: 'Delete Success!',
@@ -32,6 +34,8 @@ module.exports = {
     tip_action_modify: 'Please choose a item to modify!',
     tip_action_modifySuccess: 'Modify success!',
     tip_action_modifyFailed: 'Modify failed,Please try again later!',
+    tip_action_copySuccess: 'Copy success!',
+    tip_action_copyFailed: 'Copy failed,please copy manually!',
 
     label_btn_confirm: 'OK',
     label_btn_cancel: 'CANCEL',
@@ -41,6 +45,12 @@ module.exports = {
     label_btn_prev: 'PREV',
     label_btn_noAccount: 'Not registered yet?',
     label_btn_forgetPW: 'Forget Password?',
+    label_btn_addNote: 'new note',
+    label_btn_cancelLow: 'cancel',
+    label_btn_editorNote: 'edit',
+    label_btn_saveNote: 'save',
+    label_btn_downloadNote: 'download',
+    label_btn_copyNote: 'copy',
     label_input_email: 'Email:',
     label_input_pw: 'Password:',
     label_input_newPW: 'New Password:',
@@ -83,4 +93,5 @@ module.exports = {
     label_tooltip_modify: 'modify',
     label_tooltip_showHide: 'show the hidden items',
     label_tooltip_hideHide: 'hide the hidden items',
+    label_tooltip_seeAllNote: 'click to see the all text',
 };

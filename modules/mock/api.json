@@ -373,5 +373,93 @@
         }
       }
     }
+  ],
+  "note": [
+    {
+      "url": "/getNote",
+      "desc": "获取Note列表",
+      "method": "POST",
+      "delay": 200,
+      "mock": true,
+      "res": {
+        "code": 200,
+        "msg": "success",
+        "data|20": [
+          {
+            "id|+1": 0,
+            "title": "@ctitle(5, 20)",
+            "ctime": "@date('yyyy-MM-dd')",
+            "mtime": "@date('yyyy-MM-dd')",
+            "body|1": [
+              "@paragraph()",
+              "@cparagraph"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "/downloadNote",
+      "desc": "下载",
+      "method": "GET",
+      "delay": 200,
+      "mock": true,
+      "res": {
+        "code": 200,
+        "msg": "success",
+        "data|20": "file"
+      }
+    },
+    {
+      "url": "/deleteNote",
+      "desc": "删除",
+      "method": "POST",
+      "delay": 200,
+      "mock": true,
+      "res": {
+        "code": 200,
+        "msg": "删除成功",
+        "data": true
+      }
+    },
+    {
+      "url": "/modifyNote",
+      "desc": "修改",
+      "method": "POST",
+      "delay": 200,
+      "mock": true,
+      "res": {
+        "code": 200,
+        "msg": "修改成功",
+        "data": {
+          "id|+1": 0,
+          "title": "@ctitle(5, 20)",
+          "ctime": "@date('yyyy-MM-dd')",
+          "mtime": "@date('yyyy-MM-dd')",
+          "body|1": [
+            "@paragraph()",
+            "@cparagraph"
+          ]
+        }
+      }
+    },
+    {
+      "url": "/addNote",
+      "desc": "添加",
+      "method": "POST",
+      "delay": 200,
+      "mock": true,
+      "res": {
+        "code": 200,
+        "msg": "添加成功",
+        "data": {
+          "id|+1": 0,
+          "title": "未命名笔记",
+          "ctime": "@date('yyyy-MM-dd')",
+          "mtime": "@date('yyyy-MM-dd')",
+          "body": ""
+        }
+      }
+    }
   ]
 }

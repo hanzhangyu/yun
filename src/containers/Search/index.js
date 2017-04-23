@@ -10,17 +10,16 @@ import Immutable from 'immutable';
 import {map} from 'lodash';
 import { KEYBOARD,SEARCH_KEYWORD,ACTIVE_COLOR,DEFAULT_UPLOAD_IMG } from '../../constants/const';
 import API from '../../utils/api';
-import { perfectScroll,perfectScrollUpdate } from '../../utils/help';
+import { perfectScroll,perfectScrollUpdate,isCurrentPage,pageInit } from '../../utils/help';
 
 import style from './style.less';
 import searchImg from '../../layouts/images/search.png';
 
+import rootActions from '../../actions/root';
 import searchActions from '../../actions/search';
 import snackActions from '../../actions/snack';
 import PureComponent from '../../components/PureComponent';
 import ImgUpload from '../../components/ImgUpload';
-
-import swal from 'sweetalert';
 
 import ReactTooltip from 'react-tooltip'
 import Dialog from 'material-ui/Dialog';
@@ -295,23 +294,8 @@ class Search extends PureComponent {
     /***************** Dialog事件 结束 *****************/
 
     componentDidMount() {
-        let callback = ()=> {
-            perfectScroll(this.refs.list);
-            this.fixHeight();
-            let resize = ()=> {
-                // 切换项目之后解除绑定
-                if (location.pathname.split('/')[1] == '') {
-                    this.fixHeight();
-                    perfectScrollUpdate(this.refs.list);
-                } else {
-                    window.removeEventListener('resize', resize);
-                }
-            };
-            window.addEventListener('resize', resize);
-        };
-        // 检查是否有缓存
-        this.props.currentSearch.get('id') === undefined ? this.props.actions.getSearch().then(callback) : callback();
-
+        isCurrentPage.call(this);
+        pageInit.call(this, this.props.currentSearch.get('id') === undefined, 'getSearch');
     }
 
     render() {
@@ -516,9 +500,9 @@ class Search extends PureComponent {
 }
 
 // connect action to props
-const mapStateToProps = (state) => ({...state.search});
+const mapStateToProps = (state) => ({...state.root, ...state.search});
 // 使用对象扩展运算,绑定多个 action
-const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...searchActions, ...snackActions}, dispatch)});
+const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...rootActions, ...searchActions, ...snackActions}, dispatch)});
 
 export default connect(
     mapStateToProps,

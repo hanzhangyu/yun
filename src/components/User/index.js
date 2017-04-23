@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { Map } from 'immutable';
 import classnames from 'classnames';
 
-import rootActions from '../../actions/root';
+import userActions from '../../actions/user';
 import snackActions from '../../actions/snack';
 
 import ImgUpload from '../../components/ImgUpload';
@@ -471,12 +471,9 @@ class User extends PureComponent {
 
 
 // connect action to props
-const mapStateToProps = (state) => ({
-    user: state.root.user,
-    isLogin: state.root.isLogin
-});
+const mapStateToProps = (state) => ({...state.user});
 // 使用对象扩展运算,绑定多个 action
-const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...rootActions, ...snackActions}, dispatch)});
+const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...userActions, ...snackActions}, dispatch)});
 
 export default connect(
     mapStateToProps,

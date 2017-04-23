@@ -9,6 +9,8 @@ import search from './search';
 import pageLoading from './pageLoading';
 import snack from './snack';
 import site from './site';
+import user from './user';
+import note from './note';
 
 export default combineReducers({
     routeReducer, // react router
@@ -17,5 +19,7 @@ export default combineReducers({
     search,
     pageLoading,
     snack,
-    site
+    site,
+    user,
+    note
 });
