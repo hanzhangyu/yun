@@ -76,9 +76,7 @@ module.exports = {
 
     label_drawer_search: 'Yun Search',
     label_drawer_site: 'My Site',
-    label_drawer_pic: 'Pics',
     label_drawer_note: 'Notes',
-    label_drawer_todo: 'TODO',
 
     label_tooltip_add: 'add',
     label_tooltip_delete: 'delete',

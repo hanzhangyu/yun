@@ -77,9 +77,7 @@ module.exports = {
 
     label_drawer_search: 'Yun搜',
     label_drawer_site: '收藏站点',
-    label_drawer_pic: '图片',
     label_drawer_note: '笔记',
-    label_drawer_todo: '备忘录',
 
 
     label_tooltip_add: '添加',

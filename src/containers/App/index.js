@@ -53,17 +53,9 @@ const NAV_CONFIG = {
         path: 'site',
         label: L.label_drawer_site
     },
-    'pic': {
-        path: 'pic',
-        label: L.label_drawer_pic
-    },
     'note': {
         path: 'note',
         label: L.label_drawer_note
-    },
-    'todo': {
-        path: 'todo',
-        label: L.label_drawer_todo
     }
 };
 
