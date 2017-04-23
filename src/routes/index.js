@@ -6,9 +6,7 @@ import { Router, Route, IndexRedirect, IndexRoute, browserHistory } from 'react-
 
 import App from '../containers/App';
 import sitePage from '../containers/site';
-import picPage from '../containers/pic';
 import notePage from '../containers/note';
-import todoPage from '../containers/todo';
 
 // route 参数表示要进入的路由地址, replace 用来重定向路由地址.这里就将路由重定向到 path 中
 const redirectTo = (path) => (route, replace) => {
@@ -23,13 +21,7 @@ const routes = {
             path: 'site', component: sitePage
         },
         {
-            path: 'pic', component: picPage
-        },
-        {
             path: 'note', component: notePage
-        },
-        {
-            path: 'todo', component: todoPage
         },
         {path: '*', onEnter: redirectTo('/')}  // 当以上路由都没匹配到的时候,进入这里,然后重定向到 / 路由(onEnter:进入此路由前调用)
     ]
