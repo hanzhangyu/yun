@@ -65,7 +65,8 @@ class App extends PureComponent {
         super(props);
         this.state = {
             isDrawerOpened: false,
-            isMobile: false
+            isMobile: false,
+            loadUser: false
         };
     }
 
@@ -101,16 +102,17 @@ class App extends PureComponent {
         const actions = this.props.actions;
         actions.getCurrentUser().then(()=> {
             actions.hidePageLoading();
+            this.setState({loadUser: true})
         });
 
         // 背景自适应
+        this.adaptBg();
         window.addEventListener('resize', this.adaptBg.bind(this));
     }
 
     render() {
-        this.adaptBg();
         console.log('renderApp')
-        const { isDrawerOpened,isMobile }=this.state;
+        const { isDrawerOpened,isMobile,loadUser  }=this.state;
         const { children,pageLoading,currentPage,snackMsg,actions,systemConfigure } = this.props;
         // FIXME 临时性的写法
         const hasBgColor = location.pathname.split('/')[1] == NAV_CONFIG.note.path;
@@ -153,7 +155,7 @@ class App extends PureComponent {
                     />
                     {/* 主体 */}
                     {
-                        children ? children : <SearchPage />
+                        loadUser && (children ? children : <SearchPage />)
                     }
                 </div>
             </MuiThemeProvider>
