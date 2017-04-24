@@ -7,14 +7,10 @@ import API from '../utils/api';
 
 // createAction 接收的第一个参数是 action 的 type; 第二个参数的返回值会保存在 action.payload 字段中; 第三个参数的返回值会保存在 action.meta 字段中.
 export default {
-    // 动画
-    changeCurrentSearch: createAction(SEARCH_CHANGE_CURRENT, ()=> {
-    }, (search)=>search),
-
-    // 数据操作
+    changeCurrentSearch: createAction(SEARCH_CHANGE_CURRENT, API.changeCurrentSearch, (search)=>search),
     getSearch: createAction(SEARCH_GET, API.getSearchData),
-    deleteSearch: createAction(SEARCH_DELETE, API.deleteSearch, (deleteArray,deleteObj)=>deleteObj),
-    addSearch: createAction(SEARCH_ADD,API.addSearch,(search)=>search),
-    modifySearch: createAction(SEARCH_MODIFY,API.modifySearch,(search)=>search),
+    deleteSearch: createAction(SEARCH_DELETE, API.deleteSearch, (deleteArray, deleteObj)=>deleteObj),
+    addSearch: createAction(SEARCH_ADD, API.addSearch, (search)=>search),
+    modifySearch: createAction(SEARCH_MODIFY, API.modifySearch, (search)=>search),
 
 }

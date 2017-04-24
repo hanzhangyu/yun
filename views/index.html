@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Yun</title>
+    <meta name="description" content="个人云主页">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<link href="css/index.css" rel="stylesheet"></head>
+<body>
+<div id="root">
+    <style>
+        .content {
+            position: absolute;
+            top: 40%;
+            left: 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        .text {
+            font-size: 24px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .pre-loading {
+            display: inline-block;
+            color: inherit;
+            vertical-align: middle;
+            pointer-events: none;
+            width: 200px;
+            height: 44px;
+            border: .05em #2db7f5 solid;
+            border-radius: 5px;
+            background: -webkit-linear-gradient(150deg, transparent 0%, transparent 50%, currentcolor 50%, currentcolor 75%, transparent 75%, transparent);
+            background: linear-gradient(-60deg, transparent 0%, transparent 50%, #2db7f5 50%, #2db7f5 75%, transparent 75%, transparent);
+            background-size: 50px 85px;
+            background-position: 0 0;
+            -webkit-animation: preLoading 1s infinite linear;
+            animation: preLoading 1s infinite linear;
+        }
+
+        @-webkit-keyframes preLoading {
+            from {
+                background-position: 0 0;
+            }
+            to {
+                background-position: 100% 0;
+            }
+        }
+
+        @keyframes preLoading {
+            from {
+                background-position: 0 0;
+            }
+            to {
+                background-position: 100% 0;
+            }
+        }
+    </style>
+    <div class="content">
+        <div class="text">玩命加载资源中。。。</div>
+        <div class="pre-loading"></div>
+    </div>
+</div>
+<script type="text/javascript" src="js/index.js"></script></body>
+</html>

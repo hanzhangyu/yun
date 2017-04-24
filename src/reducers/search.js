@@ -17,7 +17,7 @@ export default handleActions({
         let {currentSearch,searchList}=action.payload;
         return {...state, currentSearch: Map(currentSearch), searchList: fromJS(searchList)}
     }),
-    [SEARCH_CHANGE_CURRENT]: (state, action) => ({...state, currentSearch: Map(action.meta)}),
+    [SEARCH_CHANGE_CURRENT]: checkError((state, action) => ({...state, currentSearch: Map(action.meta)})),
     [SEARCH_DELETE]: checkError((state, action)=> {
         // 把ID号转变为index值
         let searchList = state.searchList;

@@ -111,6 +111,7 @@ export default {
 
     // search
     getBaiduKeyWord: (params, callbackName) => requestJsonp('https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su', params, callbackName),
+    changeCurrentSearch: params => request(getApi('/changeCurrentSearch'), params),
     getSearchData: params => request(getApi('/searchData'), params),
     deleteSearch: params => request(getApi('/deleteSearch'), params, METHOD.POST, true),
     addSearch: params => request(getApi('/addSearch'), params, METHOD.POST, true),

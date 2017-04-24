@@ -215,6 +215,22 @@
       }
     },
     {
+      "url": "/changeCurrentSearch",
+      "desc": "拉取",
+      "method": "POST",
+      "delay": 200,
+      "mock": true,
+      "req": {
+        "email": "939205919@qq.com",
+        "password": "123456"
+      },
+      "res": {
+        "code": 200,
+        "msg": "switch search successfully!",
+        "data": true
+      }
+    },
+    {
       "url": "/deleteSearch",
       "desc": "删除",
       "method": "POST",
