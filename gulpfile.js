@@ -82,6 +82,6 @@ gulp.task('clean', function () {
     }
 });
 
-gulp.task('default', ['build', 'server'], function () {
+gulp.task('default', ['server'], function () {
     open(3001);
 });
