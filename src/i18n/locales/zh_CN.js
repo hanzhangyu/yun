@@ -1,7 +1,9 @@
 module.exports = {
     logo: "Yun",
+    visitor:'游客',
 
     tip_login: '我们终于等到您了，喜欢就登录一下吧！',
+    tip_noLogin: '您还未登陆！',
     tip_form_pw_default: '密码使用6至20的字母和数字至少两种组合',
     tip_form_username_default: '用户名使用3至10位中文、字母或数字',
     tip_form_forgetPW: '我们会把一串随机密码（原来的密码和随机密码都有效）发送至您的邮箱，该随机密码1小时后失效！',

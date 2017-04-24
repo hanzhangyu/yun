@@ -177,8 +177,12 @@ class Search extends PureComponent {
             othersState.dialogDefaultImg = search.img;
             othersState.dialogModifyId = search.id;
             this.setState({dialogOpen: true, ...othersState})
-        } else {
-            search.id == this.props.currentSearch.get('id') || this.props.actions.changeCurrentSearch(search);
+        } else if (search.id != this.props.currentSearch.get('id')) {
+            if (this.props.isLogin) {
+                this.props.actions.changeCurrentSearch(search);
+            } else {// 游客本地使用
+                this.props.actions.changeCurrentSearchLocal(search);
+            }
         }
     }
 
@@ -500,7 +504,7 @@ class Search extends PureComponent {
 }
 
 // connect action to props
-const mapStateToProps = (state) => ({...state.root, ...state.search});
+const mapStateToProps = (state) => ({...state.root, ...state.search, ...state.user});
 // 使用对象扩展运算,绑定多个 action
 const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...rootActions, ...searchActions, ...snackActions}, dispatch)});
 

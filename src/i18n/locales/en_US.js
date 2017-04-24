@@ -1,7 +1,9 @@
 module.exports = {
     logo: "Yun",
+    visitor:'visitor',
 
     tip_login: 'We finally wait for you, like, you can log in it!',
+    tip_noLogin: 'Not logged!',
     tip_form_pw_default: 'Passwords use at least two combinations of letters and numbers from 6 to 20',
     tip_form_username_default: 'Username use 3 to 10 Chinese characters, letters or numbers',
     tip_form_forgetPW: 'We will send a random password (both original password and random password are valid) sent to your mailbox, the random password will invalid after 1 hour!',

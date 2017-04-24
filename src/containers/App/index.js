@@ -81,7 +81,7 @@ class App extends PureComponent {
 
     // 打开导航栏
     toggleNav() {
-        this.setState({isDrawerOpened: !this.state.isDrawerOpened})
+        this.props.isLogin ? this.setState({isDrawerOpened: !this.state.isDrawerOpened}) : swal(L.tip_noLogin)
     }
 
     // 设置合适的背景样式
@@ -166,6 +166,7 @@ class App extends PureComponent {
 // connect action to props
 const mapStateToProps = (state) =>({
     ...state.root,
+    ...state.user,
     ...state.pageLoading,
     ...state.snack
 });

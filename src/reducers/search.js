@@ -3,7 +3,7 @@
  */
 import { handleActions } from 'redux-actions';
 import {Map,fromJS} from 'immutable';
-import { SEARCH_CHANGE_CURRENT,SEARCH_DELETE,SEARCH_GET,SEARCH_ADD,SEARCH_MODIFY } from '../constants/actions';
+import { SEARCH_CHANGE_CURRENT,SEARCH_DELETE,SEARCH_GET,SEARCH_ADD,SEARCH_MODIFY,SEARCH_CHANGE_CURRENT_LOCAL } from '../constants/actions';
 import { checkError } from '../utils/help';
 
 const initialState = {
@@ -18,6 +18,7 @@ export default handleActions({
         return {...state, currentSearch: Map(currentSearch), searchList: fromJS(searchList)}
     }),
     [SEARCH_CHANGE_CURRENT]: checkError((state, action) => ({...state, currentSearch: Map(action.meta)})),
+    [SEARCH_CHANGE_CURRENT_LOCAL]: (state, action) => ({...state, currentSearch: Map(action.meta)}),
     [SEARCH_DELETE]: checkError((state, action)=> {
         // 把ID号转变为index值
         let searchList = state.searchList;

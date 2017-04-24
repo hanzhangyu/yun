@@ -248,6 +248,7 @@
       "method": "POST",
       "delay": 200,
       "mock": true,
+      "req": "img, name, link, hide, open",
       "res": {
         "code": 200,
         "msg": "添加成功",

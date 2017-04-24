@@ -150,10 +150,22 @@ module.exports = {
         stats: {
             colors: true
         },
-        // api proxy. 所有 /api/* 的请求都代理到 http://127.0.0.1:2618 了,而这个地址是通过 node 启动的一个服务器,用来返回 mock 数据
+        // api{site,search,root,note} proxy. 所有 /api/* 的请求都代理到 http://127.0.0.1:3001 了,而这个地址是通过 node 启动的一个服务器,用来返回 mock 数据
         // images proxy. 所有测试图片放在正式环境目录下，默认图片除外
         proxy: {
-            '/api/*': {
+            '/site/*': {
+                target: 'http://127.0.0.1:3001',
+                secure: false
+            },
+            '/note/*': {
+                target: 'http://127.0.0.1:3001',
+                secure: false
+            },
+            '/search/*': {
+                target: 'http://127.0.0.1:3001',
+                secure: false
+            },
+            '/root/*': {
                 target: 'http://127.0.0.1:3001',
                 secure: false
             },

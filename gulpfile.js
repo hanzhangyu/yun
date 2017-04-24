@@ -50,7 +50,8 @@ gulp.task('server', function (callback) {
             "views/",
             "bin/",
             "routes/",
-            "app.js"
+            "app.js",
+            "modules/"
         ],
         env: {'NODE_ENV': process.env.NODE_ENV || 'development'}
     }).on('start', function () {
@@ -83,5 +84,5 @@ gulp.task('clean', function () {
 });
 
 gulp.task('default', ['server'], function () {
-    open(3001);
+    //open(3001);
 });

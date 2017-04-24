@@ -9,6 +9,7 @@ import { Map } from 'immutable';
 import classnames from 'classnames';
 
 import userActions from '../../actions/user';
+import searchActions from '../../actions/search';
 import snackActions from '../../actions/snack';
 
 import ImgUpload from '../../components/ImgUpload';
@@ -33,6 +34,10 @@ import { getAllLocales, getLocale, setLocale} from '../../i18n';
 var L = require('../../i18n/locales/en_US');
 const LOCALE = getLocale(true);
 L = LOCALE.i18n;
+const STYLE_HIDE = {
+    display: 'none'
+};
+
 const DIALOGTYPES = {
     default: {
         label: "default",
@@ -145,6 +150,11 @@ class User extends PureComponent {
         })
     }
 
+    signSuccess(msg) {
+        this.msgChange(msg, INITSTATE);
+        this.props.actions.getSearch();
+    }
+
     // 点击dialog中确认按钮
     switchDialog(type) {
         if (type) {
@@ -159,12 +169,12 @@ class User extends PureComponent {
                     this.onRegInput('email&&PW', true) && actions.userLogin({
                         email,
                         PW
-                    }).then(()=>this.props.isLogin && this.msgChange(L.tip_form_loginSuccess, INITSTATE));
+                    }).then(()=>this.props.isLogin && this.signSuccess(L.tip_form_loginSuccess));
                     break;
                 case DIALOGTYPES.signUp.label:
                     this.onRegInput('email&&PW&&rePW', true) && actions.userSignUp({
                         email, PW
-                    }).then(()=>this.props.isLogin && this.msgChange(L.tip_form_signUpSuccess, INITSTATE));
+                    }).then(()=>this.props.isLogin && this.signSuccess(L.tip_form_signUpSuccess));
                     break;
                 case DIALOGTYPES.forgetPW.label:
                     this.onRegInput('email', true) && actions.userForgetPW({email}).then((data)=>data.error || this.msgChange(L.tip_form_forgetPW_success, INITSTATE));
@@ -279,6 +289,11 @@ class User extends PureComponent {
         const { user,isLogin } = this.props;
         const actions = [
             <FlatButton
+                label={L.label_userBtn_changeLang}
+                style={isLogin?STYLE_HIDE:{}}
+                onTouchTap={this.changeLanguage}
+            />,
+            <FlatButton
                 label={L.label_btn_cancel}
                 onTouchTap={this.handleClose}
             />,
@@ -391,7 +406,7 @@ class User extends PureComponent {
             document.title != L.logo && (document.title = L.logo);
             return (
                 <div>
-                    <FloatingActionButton backgroundColor="#fff" title="123"
+                    <FloatingActionButton backgroundColor="#fff" title={L.visitor}
                                           onClick={()=>{this.openSignDialog('default')}}>
                         <img src={('/'+userBoyImg)} alt={L.label_user_img}/>
                     </FloatingActionButton>
@@ -473,7 +488,7 @@ class User extends PureComponent {
 // connect action to props
 const mapStateToProps = (state) => ({...state.user});
 // 使用对象扩展运算,绑定多个 action
-const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...userActions, ...snackActions}, dispatch)});
+const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...userActions, ...searchActions, ...snackActions}, dispatch)});
 
 export default connect(
     mapStateToProps,

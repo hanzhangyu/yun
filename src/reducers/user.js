@@ -15,7 +15,12 @@ const initialState = {
 const setCurrentUser = (state, action)=>({...state, isLogin: true, user: Map(action.payload)});
 
 export default handleActions({
-    [GET_CURRENT_USER]: checkError(setCurrentUser),
+    [GET_CURRENT_USER]: checkError((state, action)=> {
+        // fixme 角色分类，这里暂时使用ID为0判断游客
+        let user = action.payload;
+        let isLogin = user.userId != 0;
+        return {...state, isLogin: isLogin, user: Map(user)}
+    }),
     [USER_LOGIN]: checkError(setCurrentUser),
     [USER_SIGN_UP]: checkError(setCurrentUser),
     [USER_FORGET_PW]: (state)=> state,

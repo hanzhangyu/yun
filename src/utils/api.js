@@ -8,7 +8,7 @@ import fetchJsonp from 'fetch-jsonp';
 
 // querystring 包含 stringify 和 parse 两个方法. stringify 用来将对象转换成字符串,用 & = 连接的查询字符串; parse 正好相反,将字符串转为对象
 import qs from 'querystring';
-import { API_PREFIX, API_SUCCESS_CODE, API_ERROR_NOT_LOGIN_CODE } from '../constants/api';
+import { ROOT_PREFIX,SEARCH_PREFIX,SITE_PREFIX,NOTE_PREFIX, API_SUCCESS_CODE, API_ERROR_NOT_LOGIN_CODE } from '../constants/api';
 
 import swal from 'sweetalert';
 
@@ -68,7 +68,7 @@ const checkRespStatus = (respPromise) => {
             if (resp && resp.code === API_SUCCESS_CODE) {
                 resolve(resp.data);
             } else if (resp && resp.code === API_ERROR_NOT_LOGIN_CODE) {
-                // 当 resp.code 为403时,没有登录,直接返回错误消息不提示,在store中有标记
+                swal({title: "Error!", text: L.tip_noLogin, type: "error"});
                 reject(resp);
             } else {
                 resp.msg && swal({title: "Error!", text: resp.msg, type: "error"});
@@ -93,41 +93,44 @@ const requestJsonp = (url, params, callbackName)=> {
     });
 };
 
-const getApi = (url) => API_PREFIX + url;
+const getApiRoot = (url) => ROOT_PREFIX + url;
+const getApiSearch = (url) => SEARCH_PREFIX + url;
+const getApiSite = (url) => SITE_PREFIX + url;
+const getApiNote = (url) => NOTE_PREFIX + url;
 
 // dataType: 字符串,如 /search, 即请求的服务器地址
 // params: 保存搜索条件的 json 对象或formData
 export default {
     // root
-    getCurrentUser: params => request(getApi('/currentUser'), params, METHOD.GET),
-    login: params => request(getApi('/login'), params),
-    signUp: params => request(getApi('/signUp'), params),
-    forgetPW: params => request(getApi('/forgetPW'), params),
-    changePW: params => request(getApi('/changePW'), params),
-    changeUsername: params => request(getApi('/changeUsername'), params),
-    changeAvatar: params => request(getApi('/changeAvatar'), params),
-    imgUpload: params => request(getApi('/imgUpload'), params, METHOD.POST, false, true),
-    logout: params => request(getApi('/logout'), params, METHOD.GET),
+    getCurrentUser: params => request(getApiRoot('/currentUser'), params, METHOD.GET),
+    login: params => request(getApiRoot('/login'), params),
+    signUp: params => request(getApiRoot('/signUp'), params),
+    forgetPW: params => request(getApiRoot('/forgetPW'), params),
+    changePW: params => request(getApiRoot('/changePW'), params),
+    changeUsername: params => request(getApiRoot('/changeUsername'), params),
+    changeAvatar: params => request(getApiRoot('/changeAvatar'), params),
+    imgUpload: params => request(getApiRoot('/imgUpload'), params, METHOD.POST, false, true),
+    logout: params => request(getApiRoot('/logout'), params, METHOD.GET),
 
     // search
     getBaiduKeyWord: (params, callbackName) => requestJsonp('https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su', params, callbackName),
-    changeCurrentSearch: params => request(getApi('/changeCurrentSearch'), params),
-    getSearchData: params => request(getApi('/searchData'), params),
-    deleteSearch: params => request(getApi('/deleteSearch'), params, METHOD.POST, true),
-    addSearch: params => request(getApi('/addSearch'), params, METHOD.POST, true),
-    modifySearch: params => request(getApi('/modifySearch'), params, METHOD.POST, true),
+    changeCurrentSearch: params => request(getApiSearch('/changeCurrentSearch'), params),
+    getSearchData: params => request(getApiSearch('/searchData'), params),
+    deleteSearch: params => request(getApiSearch('/deleteSearch'), params, METHOD.POST, true),
+    addSearch: params => request(getApiSearch('/addSearch'), params, METHOD.POST, true),
+    modifySearch: params => request(getApiSearch('/modifySearch'), params, METHOD.POST, true),
 
     // site
-    getSite: params=> request(getApi('/getSite'), params),
-    searchSite: params=> request(getApi('/searchSite'), params, METHOD.GET),
-    deleteSite: params=> request(getApi('/deleteSite'), params, METHOD.POST, true),
-    addSite: params=> request(getApi('/addSite'), params, METHOD.POST, true),
-    modifySite: params=> request(getApi('/modifySite'), params, METHOD.POST, true),
+    getSite: params=> request(getApiSite('/getSite'), params),
+    searchSite: params=> request(getApiSite('/searchSite'), params, METHOD.GET),
+    deleteSite: params=> request(getApiSite('/deleteSite'), params, METHOD.POST, true),
+    addSite: params=> request(getApiSite('/addSite'), params, METHOD.POST, true),
+    modifySite: params=> request(getApiSite('/modifySite'), params, METHOD.POST, true),
 
     // note
-    getNote: params=> request(getApi('/getNote'), params),
-    modifyNote: params=> request(getApi('/modifyNote'), params, METHOD.POST, true),
-    deleteNote: params=> request(getApi('/deleteNote'), params, METHOD.POST, true),
-    addNote: params=> request(getApi('/addNote'), params),
+    getNote: params=> request(getApiNote('/getNote'), params),
+    modifyNote: params=> request(getApiNote('/modifyNote'), params, METHOD.POST, true),
+    deleteNote: params=> request(getApiNote('/deleteNote'), params, METHOD.POST, true),
+    addNote: params=> request(getApiNote('/addNote'), params),
 
 }
