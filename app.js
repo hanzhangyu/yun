@@ -44,7 +44,6 @@ app.use(session({
 
 // 未登录时访问需要登录的地址重定向
 app.all('*', function (req, res, next) {
-    req.session.userID = 36;// fixme 免登陆
     if (req.session.userID || asess.free(req.path)) {
         next();
     } else if (asess.redirect(req.path)) {
@@ -57,6 +56,10 @@ app.all('*', function (req, res, next) {
             data: false
         }))
     }
+});
+
+app.get('/', function (req, res) {
+    res.sendFile(path.resolve(__dirname, 'views', 'index.html'));
 });
 
 app.use('/note', note);

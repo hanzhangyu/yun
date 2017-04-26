@@ -70,7 +70,10 @@ const checkRespStatus = (respPromise) => {
             if (resp && resp.code === API_SUCCESS_CODE) {
                 resolve(resp.data);
             } else if (resp && resp.code === API_ERROR_NOT_LOGIN_CODE) {
-                swal({title: "Error!", text: L.tip_noLogin, type: "error"});
+                // FIXME 数据过快是前一个swal还没关闭
+                setTimeout(()=> {
+                    swal({title: "Error!", text: L.tip_noLogin, type: "error"});
+                }, 200)
                 reject(resp);
             } else {
                 resp.msg && swal({title: "Error!", text: resp.msg, type: "error"});

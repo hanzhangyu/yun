@@ -278,7 +278,10 @@ class User extends PureComponent {
 
     // 注销
     logout() {
-        this.props.actions.userLogout().then(()=>this.msgChange(L.tip_form_logoutSuccess, INITSTATE));
+        this.props.actions.userLogout().then(()=> {
+            this.msgChange(L.tip_form_logoutSuccess, INITSTATE)
+            window.location.reload()
+        });
     }
 
     // 切换语言

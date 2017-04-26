@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "cross-env NODE_ENV=production gulp",
+    "start": "npm run server",
     "dev": "run-p devServer server",
     "test": "gulp devServer",
     "devServer": "webpack-dev-server --progress",
