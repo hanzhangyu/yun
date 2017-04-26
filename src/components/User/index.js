@@ -114,9 +114,9 @@ class User extends PureComponent {
     // 打开对话框并设置类型，类型参见DIALOGTYPES
     openSignDialog(type, others) {
         this.setState({
+            ...others,
             signDialogOpen: true,
             dialogType: DIALOGTYPES[type].label,
-            ...others
         });
     }
 
@@ -183,7 +183,12 @@ class User extends PureComponent {
                     this.onRegInput('oldPW&&PW&&rePW', true) && actions.userChangePW({
                         oldPW,
                         PW
-                    }).then((data)=>data.error || this.openSignDialog('login', {msg: L.tip_form_changePW_success, ...INITSTATE}));
+                    }).then((data)=> {
+                        if (!data.error) {
+                            this.openSignDialog('login', INITSTATE);
+                            this.msgChange(L.tip_form_changePW_success)
+                        }
+                    });
                     break;
                 case DIALOGTYPES.changeUsername.label:
                     this.onRegInput('username', true) && actions.userChangeName({

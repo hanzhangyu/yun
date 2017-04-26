@@ -2,7 +2,7 @@
  * Created by Paul on 2017/3/3.
  */
 import Ps from 'perfect-scrollbar';
-import {ROUTER} from '../constants/const'
+import {ROUTER,SITE_SIZE} from '../constants/const'
 import {map} from 'lodash'
 
 export const clearString = (str, clearStr, isG)=> str.toString().replace(new RegExp(clearStr, isG ? 'g' : ''), '');
@@ -139,4 +139,27 @@ export const pageInit = function (hasCache, action, shouldFix = true, callback =
     };
     // 检查是否有缓存
     hasCache ? this.props.actions[action]().then(_callback) : _callback();
+};
+
+/**
+ * GM在window系统上运行一直报错，只能使用前端的办法，还是前端靠谱
+ * @param src
+ * @param crop
+ * @returns {string}
+ */
+export const cutAndResizeImg = (src,crop)=> {
+    let image = new Image();
+    image.src = src;
+
+    let limitHeight = SITE_SIZE.height;
+    let limitWitdh = SITE_SIZE.width;
+
+    // 以下四个参数由步骤2获得
+    let {x,  y, width, height}=crop;
+    var canvas = document.createElement("canvas");
+    canvas.height = limitHeight;
+    canvas.width = limitWitdh;
+    let ctx = canvas.getContext('2d');
+    ctx.drawImage(image, x, y, width, height, 0, 0, limitWitdh, limitHeight);//重绘
+    return canvas.toDataURL();
 };

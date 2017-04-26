@@ -4,6 +4,7 @@
  * 所有数据请求一直API
  *
  */
+export const COMMON_PREFIX = '/common';
 export const ROOT_PREFIX = '/root';
 export const SEARCH_PREFIX = '/search';
 export const SITE_PREFIX = '/site';

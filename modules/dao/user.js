@@ -12,6 +12,8 @@ let userTable = 'user',
     dateList = 'date',
     imgList = 'image',
     currentSearchList = 'currentSearch',
+    randomPWList = 'randomPW',
+    randomDateList = 'randomDate',
     countList = 'count(*)';
 
 module.exports = {
@@ -56,6 +58,7 @@ module.exports = {
                         id: result[idList],
                         email: result[emailList],
                         username: result[userNameList],
+                        password: result[passwordList],
                         date: result[dateList],
                         image: result[imgList],
                         currentSearch: result[currentSearchList]
@@ -64,10 +67,30 @@ module.exports = {
             });
         })
     },
+    updateRPW(email, rPW, rDate){
+        return new Promise((resolve, reject) => {
+            query(`update ${userTable} set ${randomPWList}=?,${randomDateList}=? where ${emailList}=?`, [rPW, rDate, email], (err)=>err ? reject(err) : resolve());
+        })
+    },
+    updatePW(id, PW){
+        return new Promise((resolve, reject) => {
+            query(`update ${userTable} set ${passwordList}=? where ${idList}=?`, [PW, id], (err)=>err ? reject(err) : resolve());
+        })
+    },
     updateCurrentSearch(id, currentSearch){
         return new Promise((resolve, reject) => {
             query(`update ${userTable} set ${currentSearchList}=? where ${idList}=?`, [currentSearch, id], (err)=>err ? reject(err) : resolve());
         })
     },
-
-};
+    updateUsername(id, username){
+        return new Promise((resolve, reject) => {
+            query(`update ${userTable} set ${userNameList}=? where ${idList}=?`, [username, id], (err)=>err ? reject(err) : resolve());
+        })
+    },
+    updateAvatar(id, imgSrc){
+        return new Promise((resolve, reject) => {
+            query(`update ${userTable} set ${imgList}=? where ${idList}=?`, [imgSrc, id], (err)=>err ? reject(err) : resolve());
+        })
+    },
+}
+;

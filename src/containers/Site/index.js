@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import classnames from 'classnames';
 import { KEYBOARD,DEFAULT_UPLOAD_IMG,ERROR_IMG,LOADING_IMG } from '../../constants/const';
-import { perfectScroll,perfectScrollUpdate,isCurrentPage,pageInit } from '../../utils/help';
+import { perfectScroll,perfectScrollUpdate,isCurrentPage,pageInit,cutAndResizeImg } from '../../utils/help';
 import {map} from 'lodash';
 
 import style from './style.less';
@@ -109,10 +109,11 @@ const getJsxByTime = (siteObj, timeArray, deleteMode, modifyMode, checkObj, onCl
         list && result.push(list.map((val, index)=> {
             let title = val.get('title'),
                 summary = val.get('summary'),
+                id = val.get('id'),
                 link = val.get('link');
             return (
                 <div className={style.card}
-                     key={time.toString()+index}
+                     key={id}
                      onClick={()=>{onClick(val)}}>
                     {
                         deleteMode ? (
@@ -162,10 +163,11 @@ const DIALOG_DEFAULT = {
     imageType: IMG_TYPE.random,
     dialogImgCrop: null,
     dialogModifyId: null,
+    dialogDate: null,
     imgCrop: {},
 };
 
-class Search extends PureComponent {
+class Site extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -218,11 +220,12 @@ class Search extends PureComponent {
             othersState.dialogDefaultSummary = site.get('summary');
             othersState.dialogDefaultImg = site.get('img');
             othersState.dialogModifyId = site.get('id');
+            othersState.dialogDate = site.get('date');
             othersState.imageType = IMG_TYPE.unchanged;
             this.setState({dialogOpen: true, ...othersState})
         } else {
             console.log(site.get('link'));
-            //window.open(site.get('link'));
+            window.open(site.get('link'));
         }
     }
 
@@ -261,14 +264,14 @@ class Search extends PureComponent {
         let {dialogImg,dialogNext,modifyMode,imageType,dialogImgCrop,dialogDefaultImg}=this.state;
         if (confirm) {
             let {dialogInputLink,dialogInputTitle ,dialogInputSummary ,dialogInputImg,}=this.refs;
-            let link, title, summary, img;
+            let link, title, summary, img, date = this.state.dialogDate;
             let randomImgType = imageType == IMG_TYPE.random;
             let unchangedImgType = imageType == IMG_TYPE.unchanged;
             // 数据源
             if (!dialogNext) {
                 link = dialogInputLink.getValue();
-                title = dialogInputTitle.getValue() || null;
-                summary = dialogInputSummary.getValue() || null;
+                title = dialogInputTitle.getValue();
+                summary = dialogInputSummary.getValue();
                 img = randomImgType ? null
                     : imageType == IMG_TYPE.link ? dialogInputImg.getValue()
                     : imageType == IMG_TYPE.upload ? dialogImg
@@ -282,6 +285,10 @@ class Search extends PureComponent {
             // 输入验证
             if (link.length == 0) {
                 this.setState({dialogErrorMsg: L.tip_form_link_error})
+            } else if (title.length == 0) {
+                this.setState({dialogErrorMsg: L.tip_form_title_error})
+            } else if (summary.length == 0) {
+                this.setState({dialogErrorMsg: L.tip_form_summary_error})
             } else if (!randomImgType && img.length == 0) {
                 this.setState({dialogErrorMsg: L.tip_form_imgSrc_error})
             } else if (dialogNext && dialogImgCrop === null) {
@@ -291,7 +298,15 @@ class Search extends PureComponent {
                 if (randomImgType || unchangedImgType || dialogNext) {//递交
                     // 同一提交函数
                     let callback = (action, msgSuccess, msgFailed, idObj = {})=> {
-                        this.props.actions[action]({img, title, link, summary, dialogImgCrop, ...idObj}).then((data)=> {
+                        let imgFile = (randomImgType || unchangedImgType) ? null : cutAndResizeImg(img, dialogImgCrop);
+                        this.props.actions[action]({
+                            img,
+                            title,
+                            link,
+                            summary,
+                            imgFile,
+                            date, ...idObj
+                        }).then((data)=> {
                             if (!data.error) {
                                 this.props.actions.snackChangeMsg(msgSuccess);
                                 this.setState({dialogOpen: false, ...DIALOG_DEFAULT})
@@ -466,14 +481,12 @@ class Search extends PureComponent {
                                 floatingLabelText={L.label_input_siteTitle}
                                 fullWidth={true}
                                 ref="dialogInputTitle"
-                                data-tip={L.label_input_siteAutoTip}
                                 defaultValue={dialogDefaultTitle}
                             />
                             <TextField
                                 floatingLabelText={L.label_input_siteSummary}
                                 fullWidth={true}
                                 ref="dialogInputSummary"
-                                data-tip={L.label_input_siteAutoTip}
                                 multiLine={true}
                                 rows={2}
                                 rowsMax={4}
@@ -544,4 +557,4 @@ const mapDispatchToProps = (dispatch) =>
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Search);
+)(Site);

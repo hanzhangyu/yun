@@ -172,8 +172,8 @@ class Search extends PureComponent {
             let othersState = {};
             othersState.dialogDefaultName = search.name;
             othersState.dialogDefaultLink = search.link;
-            othersState.dialogDefaultHide = search.hide;
-            othersState.dialogDefaultOpen = search.open;
+            othersState.dialogDefaultHide = search.hide == 1;
+            othersState.dialogDefaultOpen = search.open == 1;
             othersState.dialogDefaultImg = search.img;
             othersState.dialogModifyId = search.id;
             this.setState({dialogOpen: true, ...othersState})

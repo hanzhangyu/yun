@@ -22,9 +22,8 @@ export default handleActions({
     [SEARCH_DELETE]: checkError((state, action)=> {
         // 把ID号转变为index值
         let searchList = state.searchList;
-        let searchListObj = searchList.toJS();
-        for (let i = searchListObj.length - 1; i >= 0; i--) {
-            let id = searchListObj[i].id;
+        for (let i = searchList.size - 1; i >= 0; i--) {
+            let id = searchList.getIn([i, 'id']);
             action.meta[id] && (searchList = searchList.delete(i));
         }
         return {...state, searchList: searchList}
@@ -34,7 +33,8 @@ export default handleActions({
         searchList: state.searchList.push(Map({...action.meta, id: action.payload}))
     })),
     [SEARCH_MODIFY]: checkError((state, action)=> {
-        let index = action.mate;
-        return {...state, searchList: state.searchList.update(index, val=>Map(action.payload))}
+        let data = action.meta;
+        let index = state.searchList.findIndex(val=>val.get('id') == data.id);
+        return {...state, searchList: state.searchList.update(index, val=>Map(data))}
     }),
 }, initialState);

@@ -19,6 +19,7 @@ module.exports = {
             let conn = client();
             conn.query(`insert into ${searchTable}(${uIdList},${nameList},${linkList},${openList},${hideList},${imgList})  VALUES(?,?,?,?,?,?)`, [uId, name, link, open, hide, img], (err)=> {
                 if (err) {
+                    console.log(err)
                     conn.end();
                     reject(err);
                 } else {
@@ -42,5 +43,21 @@ module.exports = {
                 }
             })
         })
-    }
+    },
+    updateSearch(data, userId){
+        return new Promise((resolve, reject) => {
+            let {id, name, link, open, hide, img}=data;
+            query(`update ${searchTable} set ${nameList}=?,${linkList}=?,${openList}=?,${hideList}=?,${imgList}=? where ${idList}=? and ${uIdList}=? `, [name, link, open, hide, img, id, userId], (err)=>err ? reject(err) : resolve());
+        })
+    },
+    deleteSearch(idArray, userId){
+        return new Promise((resolve, reject) => {
+            let idString = '';
+            idArray.forEach((val, index)=> {
+                idString += (index !== 0 ? ',' : '') + val
+            });
+            query(`delete from  ${searchTable} where ${idList} in (${idString}) and ${uIdList}=? `, [userId], (err)=>err ? reject(err) : resolve());
+        })
+    },
+
 };

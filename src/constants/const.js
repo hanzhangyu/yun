@@ -63,4 +63,8 @@ export const ACTIVE_COLOR = 'rgb(45, 183, 245)';
 export const DEFAULT_UPLOAD_IMG = '/images/img_upload.png';
 export const ERROR_IMG = '/images/img_error.jpg';
 export const LOADING_IMG = '/images/loading.gif';
-export const DOWNLOAD_NOTE_PATH = '/downloadNote';
+export const DOWNLOAD_NOTE_PATH = '/note/downloadNote';
+export const SITE_SIZE = {
+    width: 255,
+    height: 180
+};

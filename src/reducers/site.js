@@ -34,16 +34,24 @@ export default handleActions({
     [SITE_SEARCH]: checkError(adaptData),
     [SITE_DELETE]: checkError((state, action)=> {
         let siteObj = state.siteObj;
+        let timeArray = state.timeArray;
         // 根据服务器返回的特定数组进行删除
         map(action.payload, (val, date)=> {
-            let items = siteObj.get(date).toJS();
-            for (let i = items.length - 1; i >= 0; i--) {
-                val.findIndex(id=>id == items[i].id) >= 0 && (siteObj = siteObj.update(date, items=> {
-                    return items.delete(i)
-                }))
+            let items = siteObj.get(date);
+            for (let i = items.size - 1; i >= 0; i--) {
+                if (val.findIndex(id=>id == items.getIn([i, 'id'])) >= 0) {
+                    (siteObj = siteObj.update(date, items=> {
+                        return items.delete(i)
+                    }));
+                }
+            }
+            // 然后判断是否要在timeArray在删除
+            if (siteObj.get(date).size == 0) {
+                let index = items.findIndex(val=>val == date);
+                timeArray = timeArray.delete(index);
             }
         });
-        return {...state, siteObj: siteObj}
+        return {...state, siteObj: siteObj, timeArray: timeArray}
     }),
     [SITE_ADD]: checkError((state, action)=> {
         let siteObj = state.siteObj;

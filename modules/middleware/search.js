@@ -23,7 +23,7 @@ search.create = (data, locale)=> {
                 img: data.img
             })
             .then(result=> {
-                resolve(result);
+                resolve(result['last_insert_id()']);
             }).catch(err=>reject(L.unKnowError))
     })
 };
@@ -41,9 +41,39 @@ search.getSearchData = (userId, locale)=> {
                 }).catch((err)=> {
                     reject(L.unKnowServerError)
                 });
+                return null;
             }).catch(err=> {
             reject(L.errorOnGetSearchData)
         })
+    })
+};
+search.updateSearch = (data, userId, locale)=> {
+    return new Promise((resolve, reject) => {
+        let L = i18n.getLocale(locale);
+        searchSql.updateSearch({
+                id: data.id,
+                name: data.name,
+                link: data.link,
+                open: data.open,
+                hide: data.hide,
+                img: data.img
+            }, userId)
+            .then(()=> {
+                resolve(true);
+            }).catch(err=>reject(L.unKnowError))
+    })
+};
+search.deleteSearch = (data, userId, locale)=> {
+    return new Promise((resolve, reject) => {
+        let L = i18n.getLocale(locale);
+        if (data instanceof Array) {
+            searchSql.deleteSearch(data, userId)
+                .then(()=> {
+                    resolve(true);
+                }).catch(err=>reject(L.unKnowError))
+        } else {
+            reject(L.unKnowError)
+        }
     })
 };
 module.exports = search;

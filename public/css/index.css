@@ -4168,6 +4168,8 @@ figure {
   position: absolute;
   bottom: -25%;
   left: 50%;
+  width: 150px;
+  text-align: center;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
   color: #fff;
@@ -4585,6 +4587,12 @@ figure {
   padding: 0 16px;
   height: 100%;
   box-sizing: border-box;
+}
+.style__noteContent___9F8ux.style__noteNoSelected___2UGST {
+  text-align: center;
+  padding: 200px;
+  font-weight: bold;
+  font-size: 32px;
 }
 .style__noteContent___9F8ux .style__contentToolbar___3NL4J {
   padding: 11px 0 10px;

@@ -44,6 +44,21 @@ let visitorUserData = (L)=>({
     email: "939205919@qq.com",
     img: "/images/user_girl_default.jpg"
 });
+const randomImg = [
+    '/images/random01.jpg',
+    '/images/random02.jpg',
+    '/images/random03.jpg',
+    '/images/random04.jpg',
+    '/images/random05.jpg',
+    '/images/random06.jpg',
+    '/images/random07.jpg',
+    '/images/random08.jpg',
+    '/images/random09.jpg'
+];
+let defaultNote = (L)=>({
+    title: L.defaultNoteTitle,
+    body: L.defaultNoteBody
+});
 module.exports = {
     defaultSearchData(locale){
         let L = i18n.getLocale(locale);
@@ -52,5 +67,12 @@ module.exports = {
     visitorUserData(locale){
         let L = i18n.getLocale(locale);
         return visitorUserData(L)
+    },
+    getRandomImg(){
+        return randomImg[Math.floor(Math.random() * randomImg.length)]
+    },
+    getDefaultNote(locale){
+        let L = i18n.getLocale(locale);
+        return defaultNote(L)
     }
 };

@@ -40,7 +40,7 @@ const btnProps = {
     labelColor: "rgb(109, 109, 109)"
 };
 
-class Search extends PureComponent {
+class Note extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -68,7 +68,9 @@ class Search extends PureComponent {
             if (!data.error) {
                 let note = data.payload;
                 this.setCurrentNote(note, {editorMode: true});
-                this.refs.body.focus();
+                setTimeout(()=> {
+                    this.refs.body.focus();
+                }, 0)
             } else {
                 this.props.actions.snackChangeMsg(L.tip_action_addFailed);
             }
@@ -112,7 +114,7 @@ class Search extends PureComponent {
     }
 
     onDownload() {
-        window.open(DOWNLOAD_NOTE_PATH)
+        window.open(DOWNLOAD_NOTE_PATH+'?id='+this.state.currentId)
     }
 
     onDelete() {
@@ -129,8 +131,15 @@ class Search extends PureComponent {
                 let index = this.props.noteList.findIndex(val=>val.get('id') == id);
                 this.props.actions.deleteNote({id}, index).then((data)=> {
                     if (!data.error) {
-                        let newIndex = index !== 0 ? index - 1 : 0;
-                        this.setCurrentNote(this.props.noteList.get(newIndex).toJS(), {editorMode: false});
+                        let list = this.props.noteList;
+                        // 还有笔记
+                        if (list.size > 0) {
+                            let newIndex = index !== 0 ? index - 1 : 0;
+                            this.setCurrentNote(list.get(newIndex).toJS(), {editorMode: false});
+                        } else {
+                            // 重置id
+                            this.setCurrentNote({id: ''}, {editorMode: false});
+                        }
                         this.props.actions.snackChangeMsg(L.tip_action_deleteSuccess);
                         perfectScrollUpdate(this.refs.list);
                     }
@@ -143,17 +152,20 @@ class Search extends PureComponent {
         this.props.actions.snackChangeMsg(copy(this.state.body) ? L.tip_action_copySuccess : L.tip_action_copyFailed);
     }
 
-    setCurrentNote(note = this.props.noteList.get(0).toJS(), others = {}) {
-        this.setState({
-            currentId: note.id,
-            ctime: note.ctime,
-            mtime: note.mtime,
-            title: note.title,
-            body: note.body,
-            titleInput: note.title,
-            bodyInput: note.body,
-            ...others
-        })
+    setCurrentNote(note, others = {}) {
+        if (note || this.props.noteList.size) {
+            let data = note || this.props.noteList.get(0).toJS();
+            this.setState({
+                currentId: data.id,
+                ctime: data.ctime,
+                mtime: data.mtime,
+                title: data.title,
+                body: data.body,
+                titleInput: data.title,
+                bodyInput: data.body,
+                ...others
+            })
+        }
     }
 
     switchNote(note) {
@@ -190,7 +202,7 @@ class Search extends PureComponent {
                             {
                                 noteArray.map((note, index)=>(
                                     <li title={L.label_tooltip_seeAllNote}
-                                        key={index}
+                                        key={note.id}
                                         onClick={this.switchNote.bind(this,note)}
                                         className={classnames(style.item,{[style.select]:note.id==currentId})}>
                                         <p className={style.title}>{note.title}</p>
@@ -207,58 +219,63 @@ class Search extends PureComponent {
                         共{noteArray.length}条笔记
                     </div>
                 </section>
-                <section className={style.noteContent}>
-                    <div className={style.contentToolbar}>
-                        {
-                            editorMode ? <RaisedButton
-                                label={L.label_btn_saveNote}
-                                onClick={this.onSave}
-                                icon={<IconSave/>}/>
-                                : <RaisedButton
-                                label={L.label_btn_editorNote}
-                                onClick={this.onEditor}
-                                icon={<IconEditor/>}/>
-                        }
-                        {
-                            editorMode ? <RaisedButton
-                                label={L.label_btn_cancelLow}
-                                onClick={this.onCancel}
-                                icon={<IconCancel/>}/>
-                                : <RaisedButton
-                                onClick={this.onDownload}
-                                label={L.label_btn_downloadNote}
-                                icon={<IconDownload/>}/>
-                        }
-                        <RaisedButton
-                            onClick={this.onDelete}
-                            label={L.label_tooltip_delete}
-                            icon={<IconDelete/>}/>
-                        <RaisedButton
-                            onClick={this.onCopy}
-                            label={L.label_btn_copyNote}
-                            icon={<IconCopy/>}/>
-                    </div>
-                    <div className={classnames(style.previewBox,{[style.editorMode]:editorMode})}>
-                        <div className={style.header}>
-                            <div className={style.title}>
-                                <span>{title}</span>
-                                <input value={titleInput}
-                                       onChange={e=>this.onChange(e,'titleInput')}
-                                       ref="title"/>
-                            </div>
-                            <div className={style.info}><span
-                                className={style.ctime}>创建时间：<span>{ctime}</span></span> <span
-                                className={style.mtime}>修改时间：<span>{mtime}</span></span></div>
+
+                {
+                    currentId !== '' ? <section className={style.noteContent}>
+                        <div className={style.contentToolbar}>
+                            {
+                                editorMode ? <RaisedButton
+                                    label={L.label_btn_saveNote}
+                                    onClick={this.onSave}
+                                    icon={<IconSave/>}/>
+                                    : <RaisedButton
+                                    label={L.label_btn_editorNote}
+                                    onClick={this.onEditor}
+                                    icon={<IconEditor/>}/>
+                            }
+                            {
+                                editorMode ? <RaisedButton
+                                    label={L.label_btn_cancelLow}
+                                    onClick={this.onCancel}
+                                    icon={<IconCancel/>}/>
+                                    : <RaisedButton
+                                    onClick={this.onDownload}
+                                    label={L.label_btn_downloadNote}
+                                    icon={<IconDownload/>}/>
+                            }
+                            <RaisedButton
+                                onClick={this.onDelete}
+                                label={L.label_tooltip_delete}
+                                icon={<IconDelete/>}/>
+                            <RaisedButton
+                                onClick={this.onCopy}
+                                label={L.label_btn_copyNote}
+                                icon={<IconCopy/>}/>
                         </div>
-                        <div className={style.bodyWrap}>
-                            <div className={style.body}>{body}</div>
+                        <div className={classnames(style.previewBox,{[style.editorMode]:editorMode})}>
+                            <div className={style.header}>
+                                <div className={style.title}>
+                                    <span>{title}</span>
+                                    <input value={titleInput}
+                                           onChange={e=>this.onChange(e,'titleInput')}
+                                           ref="title"/>
+                                </div>
+                                <div className={style.info}><span
+                                    className={style.ctime}>创建时间：<span>{ctime}</span></span> <span
+                                    className={style.mtime}>修改时间：<span>{mtime}</span></span></div>
+                            </div>
+                            <div className={style.bodyWrap}>
+                                <div className={style.body}>{body}</div>
                             <textarea className={style.body}
                                       ref="body"
                                       onChange={e=>this.onChange(e,'bodyInput')}
                                       value={bodyInput}/>
+                            </div>
                         </div>
-                    </div>
-                </section>
+                    </section> :
+                        <section className={classnames(style.noteContent,style.noteNoSelected)}>{L.tip_noNote}</section>
+                }
+
             </div>
         );
     }
@@ -272,4 +289,4 @@ const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators({...rootA
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Search);
+)(Note);

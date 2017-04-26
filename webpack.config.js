@@ -169,6 +169,10 @@ module.exports = {
                 target: 'http://127.0.0.1:3001',
                 secure: false
             },
+            '/common/*': {
+                target: 'http://127.0.0.1:3001',
+                secure: false
+            },
             '/images/*': {
                 target: 'http://127.0.0.1:3001',
                 secure: false

@@ -31,6 +31,3 @@
 //], function (err, results) {
 //    console.log(results);
 //});
-
-var help =require('./modules/util/help');
-help.sendMail();

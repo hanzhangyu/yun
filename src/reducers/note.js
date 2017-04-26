@@ -14,7 +14,7 @@ export default handleActions({
     [NOTE_GET]: checkError((state, action)=>({...state, noteList: fromJS(action.payload)})),
     [NOTE_MODIFY]: checkError((state, action)=> {
         let index = state.noteList.findIndex(val=>val.get('id') == action.meta.id);
-        return {...state, noteList: state.noteList.update(index, val=>Map(action.meta))}
+        return {...state, noteList: state.noteList.update(index, val=>Map(action.payload))}
     }),
     [NOTE_DELETE]: checkError((state, action)=>({...state, noteList: state.noteList.delete(action.meta.index)})),
     [NOTE_ADD]: checkError((state, action)=>({...state, noteList: state.noteList.unshift(Map(action.payload))})),

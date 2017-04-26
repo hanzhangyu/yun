@@ -13,6 +13,9 @@ let consts = require('../util/const');
 // 防止SQL注入攻击
 var isValid = (email, password)=>(/^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/).test(email) && (/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/).test(password);
 
+const vaildEmail = "1234567890@qq.com";
+const vaildPW = "123qwe";
+
 var user = {};
 user.userCreate = (data, locale)=> {
     return new Promise((resolve, reject) => {
@@ -60,6 +63,7 @@ user.userCreate = (data, locale)=> {
                                         img: user.image,
                                         email: user.email
                                     });
+                                    return null;
                                 }).catch(err=>reject(L.unKnowError))
                         });
                     })
@@ -71,21 +75,30 @@ user.userCreate = (data, locale)=> {
     })
 
 };
-user.userExist = (data)=> {
+user.userExist = (data, comparePW)=> {
     return new Promise((resolve, reject) => {
         let {email,PW}=data;
-        isValid(email, PW) ? userSql.queryByEmail(email).then((result)=> {
-            resolve({
+        userSql.queryByEmail(email).then((result)=> {
+            let user = {
                 userId: result.id,
                 name: result.username,
                 img: result.image,
                 email: result.email
-            })
-        }).catch((err)=>reject(err)) : reject(true);
+            };
+            if (comparePW) {
+                let validTime = (new Date() - new Date(result.randomDate)) / (1000 * 60 * 60) < 1;
+                if (result.password == PW || (validTime && result.randomPW == PW)) {// 登录密码正确或者检查random密码是否在有效期内匹配
+                    resolve(user)
+                } else {
+                    reject(true)
+                }
+            } else {
+                resolve(user)
+            }
+        }).catch((err)=>reject(err))
     })
 };
-
-user.userGet = (id,locale)=> {
+user.userGet = (id, locale)=> {
     return new Promise((resolve, reject) => {
         userSql.queryById(id).then((result)=> {
             resolve({
@@ -93,11 +106,71 @@ user.userGet = (id,locale)=> {
                 name: result.username,
                 img: result.image,
                 email: result.email
-            })
+            });
+            return null;
         }).catch((err)=> {
             let L = i18n.getLocale(locale);
             reject(L.unKnowServerError)
         });
     })
 };
+user.updateRPW = (data, locale)=> {
+    return new Promise((resolve, reject) => {
+        let rDate = new Date();
+        let L = i18n.getLocale(locale);
+        user.userExist({
+            email: data.email,
+            PW: vaildPW
+        }).then(()=> {
+            userSql.updateRPW(data.email, data.rPW, rDate)
+                .then(()=> resolve(true))
+                .catch(()=> reject(L.unKnowError));
+            return null;
+        }).catch(()=> {
+            reject(L.emailNotExist)
+        })
+
+    })
+};
+user.updatePW = (data)=> {
+    return new Promise((resolve, reject) => {
+        let PW = data.PW;
+        userSql.queryById(data.userID).then((result)=> {
+            if (result.password == data.oldPW && isValid(vaildEmail, PW)) {
+                userSql.updatePW(data.userID, PW)
+                    .then(()=> resolve(true))
+                    .catch(()=>reject(new Error()));
+            } else {
+                reject(new Error())
+            }
+            return null;
+        }).catch(()=>reject(new Error()))
+
+    })
+};
+user.updateUsername = (data)=> {
+    return new Promise((resolve, reject) => {
+        userSql.updateUsername(data.userID, data.username)
+            .then((result)=>resolve(true))
+            .catch(()=>reject(new Error()))
+
+    })
+};
+user.updateAvatar = (data)=> {
+    return new Promise((resolve, reject) => {
+        userSql.updateAvatar(data.userID, data.imgSrc)
+            .then((result)=>resolve(true))
+            .catch(()=>reject(new Error()))
+
+    })
+};
+user.updateCurrentSearch = (data)=> {
+    return new Promise((resolve, reject) => {
+        userSql.updateCurrentSearch(data.userID, data.id)
+            .then((result)=>resolve(true))
+            .catch(()=>reject(new Error()))
+
+    })
+};
+
 module.exports = user;

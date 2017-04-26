@@ -5,7 +5,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var formidable = require('formidable');// 解析formdata数据
 var session = require('express-session');
 
 let asess = require('./modules/acess');
@@ -15,6 +14,7 @@ var note = require('./routes/note');
 var search = require('./routes/search');
 var site = require('./routes/site');
 var user = require('./routes/user');
+var common = require('./routes/common');
 
 var app = express();
 // view engine setup
@@ -41,8 +41,10 @@ app.use(session({
     cookie: {maxAge: 3600000 * 24 * 7},//会话超时时间24*7个小时(60000为一分钟)
     saveUninitialized: true// don't create session until something stored
 }));
+
 // 未登录时访问需要登录的地址重定向
 app.all('*', function (req, res, next) {
+    req.session.userID = 36;// fixme 免登陆
     if (req.session.userID || asess.free(req.path)) {
         next();
     } else if (asess.redirect(req.path)) {
@@ -61,6 +63,7 @@ app.use('/note', note);
 app.use('/search', search);
 app.use('/site', site);
 app.use('/root', user);
+app.use('/common', common);
 
 
 // catch 404 and forward to error handler

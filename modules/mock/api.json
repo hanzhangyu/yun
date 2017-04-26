@@ -151,7 +151,7 @@
     {
       "url": "/logout",
       "desc": "注销",
-      "method": "POST",
+      "method": "GET",
       "delay": 200,
       "mock": true,
       "res": {

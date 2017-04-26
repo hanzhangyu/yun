@@ -8,8 +8,7 @@ let unNeedLogin = [
     '/root/currentUser',
     '/root/signUp',
     '/root/login',
-    '/root/forgetPW',
-    '/root/changePW'
+    '/root/forgetPW'
 ];
 let redirect = [
     '/site',

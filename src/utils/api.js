@@ -8,7 +8,7 @@ import fetchJsonp from 'fetch-jsonp';
 
 // querystring 包含 stringify 和 parse 两个方法. stringify 用来将对象转换成字符串,用 & = 连接的查询字符串; parse 正好相反,将字符串转为对象
 import qs from 'querystring';
-import { ROOT_PREFIX,SEARCH_PREFIX,SITE_PREFIX,NOTE_PREFIX, API_SUCCESS_CODE, API_ERROR_NOT_LOGIN_CODE } from '../constants/api';
+import { COMMON_PREFIX,ROOT_PREFIX,SEARCH_PREFIX,SITE_PREFIX,NOTE_PREFIX, API_SUCCESS_CODE, API_ERROR_NOT_LOGIN_CODE } from '../constants/api';
 
 import swal from 'sweetalert';
 
@@ -24,14 +24,16 @@ const METHOD = {
     DELETE: 'delete'
 };
 // 发送 fetch 请求
-const request = (url, params, method = METHOD.POST, jsonType = false, formType = false) => {
+const request = (url, params, method = METHOD.POST, jsonType = false, formType = false, noHeader = false) => {
     var options = {
-        headers: {
-            'Content-Type': jsonType ? 'application/json' : (formType ? 'multipart/form-data' : 'application/x-www-form-urlencoded')
-        },
         method: method,
         credentials: 'include'
     };
+    if (!noHeader) {
+        options.headers = {
+            'Content-Type': jsonType ? 'application/json' : (formType ? 'multipart/form-data' : 'application/x-www-form-urlencoded')
+        }
+    }
     // POST请求时，有json,string,form三种格式
     if (method !== METHOD.GET && params) {
         options.body = jsonType ? JSON.stringify(params) : formType ? params : qs.stringify(params)
@@ -93,6 +95,7 @@ const requestJsonp = (url, params, callbackName)=> {
     });
 };
 
+const getApiCommon = (url) => COMMON_PREFIX + url;
 const getApiRoot = (url) => ROOT_PREFIX + url;
 const getApiSearch = (url) => SEARCH_PREFIX + url;
 const getApiSite = (url) => SITE_PREFIX + url;
@@ -101,6 +104,9 @@ const getApiNote = (url) => NOTE_PREFIX + url;
 // dataType: 字符串,如 /search, 即请求的服务器地址
 // params: 保存搜索条件的 json 对象或formData
 export default {
+    // common
+    imgUpload: params => request(getApiCommon('/imgUpload'), params, METHOD.POST, false, true, true),
+
     // root
     getCurrentUser: params => request(getApiRoot('/currentUser'), params, METHOD.GET),
     login: params => request(getApiRoot('/login'), params),
@@ -109,7 +115,6 @@ export default {
     changePW: params => request(getApiRoot('/changePW'), params),
     changeUsername: params => request(getApiRoot('/changeUsername'), params),
     changeAvatar: params => request(getApiRoot('/changeAvatar'), params),
-    imgUpload: params => request(getApiRoot('/imgUpload'), params, METHOD.POST, false, true),
     logout: params => request(getApiRoot('/logout'), params, METHOD.GET),
 
     // search
@@ -122,7 +127,7 @@ export default {
 
     // site
     getSite: params=> request(getApiSite('/getSite'), params),
-    searchSite: params=> request(getApiSite('/searchSite'), params, METHOD.GET),
+    searchSite: params=> request(getApiSite('/searchSite'), params),
     deleteSite: params=> request(getApiSite('/deleteSite'), params, METHOD.POST, true),
     addSite: params=> request(getApiSite('/addSite'), params, METHOD.POST, true),
     modifySite: params=> request(getApiSite('/modifySite'), params, METHOD.POST, true),
