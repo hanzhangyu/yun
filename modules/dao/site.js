@@ -54,7 +54,7 @@ module.exports = {
     query(userId, key){
         let otherQuery = '';
         if (key) {
-            otherQuery += `AND (${titleList} LIKE "%${key}%" or ${linkList} like "%${key}%" or ${summaryList} like "%${key}%" or ${dateList} like "%${key}%")`;
+            otherQuery += `AND (${titleList} LIKE "%${key}%" or ${linkList} like "%${key}%" or ${summaryList} like "%${key}%" or ${dateList} like binary "%${key}%")`;
         }
         return new Promise((resolve, reject) => {
             query(`select ${idList},${titleList},${summaryList},${linkList}, DATE_FORMAT(${dateList},"%Y-%m-%d") AS ${fDateList} ,${imgList} from ${siteTable} where ${uIdList}=? ${otherQuery}  ORDER BY ${dateList} DESC`, userId, (err, result)=> {

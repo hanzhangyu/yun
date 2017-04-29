@@ -36,6 +36,12 @@ import IconCancel from 'material-ui/svg-icons/av/not-interested';
 
 import '../../layouts/images/loading.gif'
 
+// 预先加载错误图片
+(function(){
+    let imgTemp=new Image();
+    imgTemp.src='/images/loading.gif';
+}());
+
 // 国际化
 import { getAllLocales, getLocale, setLocale} from '../../i18n';
 // todo optimize
@@ -299,6 +305,15 @@ class Site extends PureComponent {
                     // 同一提交函数
                     let callback = (action, msgSuccess, msgFailed, idObj = {})=> {
                         let imgFile = (randomImgType || unchangedImgType) ? null : cutAndResizeImg(img, dialogImgCrop);
+                        if (imgFile === undefined) {
+                            swal({
+                                title: L.tip_form_imgOriganError ,
+                                type: "warning",
+                                confirmButtonColor: "#DD6B55",
+                                confirmButtonText: L.label_btn_reSelect
+                            })
+                            return;
+                        }
                         this.props.actions[action]({
                             img,
                             title,

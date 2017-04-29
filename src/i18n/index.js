@@ -29,6 +29,7 @@ export const setLocale = (locale) => {
 export const getLocale = (save) => {
     var cookieLocale = Cookies.get(COOKIE_NAME);
     var browserLocale = navigator.language || navigator.browserLanguage;
+    // 浏览器语言的格式不符合JS命名规则
     browserLocale.toLowerCase().replace('-', '_') !== 'zh_cn' && (browserLocale = 'en-US');
     browserLocale = browserLocale.replace('-', '_');
     var locale = find(LANGS, lang=>lang.value === (cookieLocale || browserLocale)) || LANGS[0];

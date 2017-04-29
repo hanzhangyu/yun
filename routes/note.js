@@ -54,7 +54,7 @@ router.get('/downloadNote', function (req, res) {
     let userID = req.session.userID;
     let id = req.query.id;
     note.getById(userID, id, req.cookies.locale).then(result=> {
-        let filename = `${Date.now()}.txt`;
+        let filename = `${result.title}.txt`;
         let filePath = path.resolve(__dirname, '../public/file/filetemp');
         let fileFullPath = path.resolve(filePath, filename);
         if (fs.existsSync(filePath)) {
@@ -68,7 +68,7 @@ router.get('/downloadNote', function (req, res) {
             console.log('创建目录');
         }
         // 结果写如临时文件
-        fs.writeFileSync(fileFullPath, result);
+        fs.writeFileSync(fileFullPath, result.body);
         res.download(fileFullPath);
     }).catch(err=> {
         res.send(help.sendErrorJson(err))

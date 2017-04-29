@@ -70,7 +70,10 @@ note.delete = (userId, id, locale)=>new Promise((resolve, reject) => {
 });
 note.getById = (userId, id, locale)=>new Promise((resolve, reject) => {
     noteSql.queryById(id, userId)
-        .then(result=>resolve(result[0].body.toString('utf8')))
+        .then(result=>resolve({
+            title: result[0].title,
+            body: result[0].body.toString('utf8')
+        }))
         .catch(err=>reject(new Error()))
 });
 module.exports = note;

@@ -60,6 +60,7 @@ module.exports = {
     },
     formatDate (date) {
         let dateTemp = {};
+        date=new Date(date);
         dateTemp.year = date.getFullYear();
         dateTemp.month = date.getMonth() + 1;
         dateTemp.day = date.getDate();

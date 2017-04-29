@@ -30,6 +30,7 @@ module.exports = {
     tip_form_noCrop_error: 'Please select the clipping area!',
     tip_form_titleEmpty_error: 'title could`nt be none!',
     //tip_form_bodyEmpty_error: 'content could`nt be none!',
+    tip_form_imgOriganError: 'Your picture does not support cross-domain, please save to your local, upload again!',
 
     tip_action_success: 'Success!',
     tip_action_deleteSuccess: 'Delete Success!',
@@ -42,6 +43,7 @@ module.exports = {
     tip_action_copySuccess: 'Copy success!',
     tip_action_copyFailed: 'Copy failed,please copy manually!',
 
+    label_btn_reSelect: 'Reselect',
     label_btn_confirm: 'OK',
     label_btn_cancel: 'CANCEL',
     label_btn_login: 'LOGIN',

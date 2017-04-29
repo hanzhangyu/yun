@@ -58,6 +58,12 @@ const taggleStyle = {
     float: 'left'
 };
 
+// 为以后社区开发预留
+const taggleHideStyle={
+    ...taggleStyle,
+    display:'none'
+};
+
 const taggleCenterStyle = {
     ...taggleStyle,
     position: 'absolute',
@@ -467,7 +473,7 @@ class Search extends PureComponent {
                         />
                         <Toggle
                             label={L.label_checkbox_open}
-                            style={taggleStyle}
+                            style={taggleHideStyle}
                             ref="isOpen"
                             defaultToggled={dialogDefaultOpen}
                         />

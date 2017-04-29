@@ -30,6 +30,7 @@ module.exports = {
     tip_form_noCrop_error: '请选择裁剪的区域！',
     tip_form_titleEmpty_error: '标题不能为空！',
     //tip_form_bodyEmpty_error: '正文不能为空！',
+    tip_form_imgOriganError: '您的图片不支持跨域，请先保存至你的本地，再上传！',
 
     tip_action_success: '成功',
     tip_action_deleteSuccess: '删除成功',
@@ -42,6 +43,7 @@ module.exports = {
     tip_action_copySuccess: '复制成功',
     tip_action_copyFailed: '复制失败，请手动复制！',
 
+    label_btn_reSelect: '重新选取',
     label_btn_confirm: '确认',
     label_btn_cancel: '算了',
     label_btn_login: '登录',

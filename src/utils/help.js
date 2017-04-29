@@ -147,7 +147,7 @@ export const pageInit = function (hasCache, action, shouldFix = true, callback =
  * @param crop
  * @returns {string}
  */
-export const cutAndResizeImg = (src,crop)=> {
+export const cutAndResizeImg = (src, crop)=> {
     let image = new Image();
     image.src = src;
 
@@ -161,5 +161,11 @@ export const cutAndResizeImg = (src,crop)=> {
     canvas.width = limitWitdh;
     let ctx = canvas.getContext('2d');
     ctx.drawImage(image, x, y, width, height, 0, 0, limitWitdh, limitHeight);//重绘
-    return canvas.toDataURL();
+    let url;
+    try {
+        url = canvas.toDataURL();
+    } catch (e) {
+        url = undefined;
+    }
+    return url;
 };
