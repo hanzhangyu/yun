@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "npm run server",
+    "start": "node ./bin/www",
     "dev": "run-p devServer server",
     "test": "gulp devServer",
     "devServer": "webpack-dev-server --progress",
