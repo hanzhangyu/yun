@@ -47,7 +47,8 @@ export default handleActions({
             }
             // 然后判断是否要在timeArray在删除
             if (siteObj.get(date).size == 0) {
-                let index = items.findIndex(val=>val == date);
+                let index = timeArray.findIndex(val=>val == date);
+                siteObj = siteObj.delete(date);
                 timeArray = timeArray.delete(index);
             }
         });
@@ -55,13 +56,20 @@ export default handleActions({
     }),
     [SITE_ADD]: checkError((state, action)=> {
         let siteObj = state.siteObj;
+        let timeArray = state.timeArray;
         let data = action.payload;
         let date = data.date;
+        let hasDate = siteObj.get(date);
         // 检查是否已有这个日期
-        siteObj = siteObj.get(date) ? siteObj.update(date, items=> {
-            return items.unshift(Map(data))
-        }) : siteObj.set(date, fromJS([data]));
-        return {...state, siteObj: siteObj}
+        if (siteObj.get(date)) {
+            siteObj = siteObj.update(date, items=> {
+                return items.unshift(Map(data))
+            })
+        } else {
+            siteObj = siteObj.set(date, fromJS([data]));
+            timeArray = timeArray.unshift(date)
+        }
+        return {...state, siteObj: siteObj, timeArray: timeArray}
     }),
     [SITE_MODIFY]: checkError((state, action)=> {
         let site = action.payload;

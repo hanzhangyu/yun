@@ -1,0 +1,9 @@
+CACHE MANIFEST
+# version 2017-04-27
+
+CACHE:
+/js/index.js
+/css/index.css
+
+NETWORK:
+*
